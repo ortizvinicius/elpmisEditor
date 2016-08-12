@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Teste</title>
+</head>
+<body>
+	<textarea name="textarea" class="textarea" id="textarea" cols="30" rows="10">Testando</textarea>
+
+	<script src="elpmisEditor.js"></script>
+	<script>
+		try {
+      var editor = new ElpmisEditor(".textarea");
+      console.log(editor.elements);
+    } catch (e){
+      console.error(e.message);
+    }
+	</script>
+</body>
+</html>

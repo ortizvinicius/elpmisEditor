@@ -1,4 +1,3 @@
-// Aqui nós carregamos o gulp e os plugins através da função `require` do nodejs
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
