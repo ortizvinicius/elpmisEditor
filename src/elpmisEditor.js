@@ -3,20 +3,32 @@
 
   var elpmisElements = [];
 
-  var ElpmisException = function(code, placeholders){
+  var ElpmisException = (function elpmisExceptionWrapper(){
     var messages = [
-      "The element '" + placeholders[0] + "' is already been used. Use the destroy method before set it again."
+      'The element {{0}} is already been used. Use the destroy method before set it again.'
     ];
 
-    this.code = code;
-    this.message = messages[code];
-  };
+    function getMessage(code, placeholders){
+      var message = messages[code];
 
-  var ElpmisEditor = function(selector){
+      placeholders.forEach(function placeholdersIterator(placeholder, placeholderIndex){
+        message = message.split('{{' + placeholderIndex + '}}').join(placeholder);
+      });
+
+      return message;
+    }
+
+    return function elpmisException(code, placeholders){
+      this.code = code;
+      this.message = getMessage(code, placeholders);
+    };
+  })();
+
+  var ElpmisEditor = function elpmisEditor(selector){
 
     var self = this;
     
-    var elSelector = selector || "#elpmisEditor";
+    var elSelector = selector || '#elpmisEditor';
     var elSelectorType = elSelector.substr(0, 1);
     var elSelectorName = elSelector.substr(1);
 
@@ -36,10 +48,10 @@
       var multipleElements = false;
 
       switch (elSelectorType){
-        case "#": //Id
+        case '#': //Id
           elements[0] = document.getElementById(elSelectorName);
           break;
-        case ".": //Class
+        case '.': //Class
           multipleElements = document.getElementsByClassName(elSelectorName);
           break;
         default: //Tag Name
@@ -48,7 +60,7 @@
       }
 
       if(multipleElements){
-        Array.prototype.forEach.call(multipleElements, function(element){
+        Array.prototype.forEach.call(multipleElements, function multipleElementsIterator(element){
           elements.push(element);
         });
       }
