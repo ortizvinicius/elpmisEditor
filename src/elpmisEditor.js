@@ -1,9 +1,13 @@
 ;(function elpmisWrapper (global, document){
   'use strict';
 
-  var elpmisElements = [];
+  var elpmisElements = [],
+      optionsDefault = {
+        wysiwyg : true
+      };
 
   var ElpmisException = (function elpmisExceptionWrapper(){
+
     var messages = [
       'The element {{0}} is already been used. Use the destroy method before set it again.'
     ];
@@ -24,28 +28,42 @@
     };
   })();
 
-  var ElpmisEditor = function elpmisEditor(selector){
+  var ElpmisEditor = function elpmisEditor(selector, op){
 
-    var self = this;
-    
-    var elSelector = selector || '#elpmisEditor';
-    var elSelectorType = elSelector.substr(0, 1);
-    var elSelectorName = elSelector.substr(1);
+    var elSelector = selector || '.elpmis',
+        elSelectorType = elSelector.substr(0, 1),
+        elSelectorName = elSelector.substr(1),
 
-    var elements = [];
+        options = {},
+        elements = [],
+        multipleElements = false;
 
     function elpmisDestroy(){
       elpmisElements[elSelector] = false;
-      this.elements = elements = [];
+      var destroyProperties = Object.keys(this);
+
+      destroyProperties.forEach(function destroyIterator(destroyProperty){
+        delete this[destroyProperty];
+      }, this);
 
       //REMOVE THE EVENT LISTENERS
+    }
+
+    if(typeof op == 'object' && op !== null){
+      Object.keys(optionsDefault).forEach(function optionsIterator(option){
+        if(op.hasOwnProperty(option)){
+          options[option] = op[option];
+        } else {
+          options[option] = optionsDefault[option];
+        }
+      });
+    } else {
+      options = optionsDefault;
     }
     
     if(!elpmisElements[elSelector]){
       
       elpmisElements[elSelector] = true;
-
-      var multipleElements = false;
 
       switch (elSelectorType){
         case '#': //Id
@@ -66,8 +84,9 @@
       }
 
       return {
-        elements: elements,
-        destroy: elpmisDestroy
+        options  : options,
+        elements : elements,
+        destroy  : elpmisDestroy
       };
 
     } else { //Element already used
