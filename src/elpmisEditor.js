@@ -3,7 +3,17 @@
 
   var elpmisElements = [],
       optionsDefault = {
-        wysiwyg : true
+        wysiwyg        : true, //boolean
+        textMode       : true, //boolean
+        types          : ["basicFormat", "header", "blocks", "lists", "special", "colors", "hyperlink"], //array
+        basicFormat    : ["strong", "em", "mark", "sup", "sub", "del"], //false or array
+        header         : ["h1", "h2", "h3", "h4", "h5", "h6"], //false or array
+        blocks         : ["p", "blockquote", "pre"], //false or array
+        lists          : ["ul", "ol", "dl"], //false or array
+        special        : ["abbr", "code", "hr"], //false or array
+        colors         : "class", //class, inline or false
+        hyperlink      : true, //boolean
+        customComponents : [] //Array of customComponent objects
       };
 
   var ElpmisException = (function elpmisExceptionWrapper(){
@@ -49,6 +59,19 @@
       //REMOVE THE EVENT LISTENERS
     }
 
+    function elpmisCustomComponent(config){
+      if(typeof config == 'object' && config !== null){
+        this.name = config.name || "customComponent" + options.customComponents.length;
+        this.element = config.element || "span"; //HTML element
+        this.class = config.class || "customClass" + options.customComponents.length; //CSS class
+        this.type = options.types.indexOf(config.type) > -1 ? config.type : "special";
+      }
+    }
+
+    function elpmisAddCustomComponent(config){
+      options.customComponents.push(new elpmisCustomComponent(config));
+    }
+
     if(typeof op == 'object' && op !== null){
       Object.keys(optionsDefault).forEach(function optionsIterator(option){
         if(op.hasOwnProperty(option)){
@@ -84,9 +107,10 @@
       }
 
       return {
-        options  : options,
-        elements : elements,
-        destroy  : elpmisDestroy
+        options            : options,
+        elements           : elements,
+        destroy            : elpmisDestroy,
+        addCustomComponent : elpmisAddCustomComponent
       };
 
     } else { //Element already used

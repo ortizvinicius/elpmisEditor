@@ -10,7 +10,14 @@
 	<script src="elpmisEditor.js"></script>
 	<script>
     var editor = new ElpmisEditor(".textarea");
-    editor.destroy();
+    editor.addCustomComponent({
+      class: "highlight",
+      type: "blocks"
+    });
+    editor.addCustomComponent({
+      class: "highlightBlue",
+      type: "blocks"
+    });
     console.log(editor);
 	</script>
 </body>
