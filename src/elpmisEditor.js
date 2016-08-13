@@ -65,11 +65,14 @@
         this.element = config.element || "span"; //HTML element
         this.class = config.class || "customClass" + options.customComponents.length; //CSS class
         this.type = options.types.indexOf(config.type) > -1 ? config.type : "special";
+      } else {
+        return false;
       }
     }
 
     function elpmisAddCustomComponent(config){
-      options.customComponents.push(new elpmisCustomComponent(config));
+      var customComponent = new elpmisCustomComponent(config);
+      if(customComponent) options.customComponents.push();
     }
 
     if(typeof op == 'object' && op !== null){
