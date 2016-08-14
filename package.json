@@ -2,7 +2,7 @@
   "name": "ElpmisEditor",
   "version": "0.0.1",
   "description": "A simple HTML editor",
-  "main": "Gulpfile.js",
+  "main": "dist/elpmisEditor.min.js",
   "dependencies": {
     "gulp-concat": "^2.6.0",
     "gulp": "^3.9.1",
@@ -24,5 +24,9 @@
     "textarea"
   ],
   "author": "@ortizvinicius",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ortizvinicius/elpmisEditor.git"
+  }
 }

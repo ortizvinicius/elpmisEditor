@@ -3,21 +3,19 @@
 
   var elpmisElements = [],
       optionsDefault = {
-        wysiwyg        : true, //boolean
-        textMode       : true, //boolean
-        types          : ["basicFormat", "header", "blocks", "lists", "special", "colors", "hyperlink"], //array
-        basicFormat    : ["strong", "em", "mark", "sup", "sub", "del"], //false or array
-        header         : ["h1", "h2", "h3", "h4", "h5", "h6"], //false or array
-        blocks         : ["p", "blockquote", "pre"], //false or array
-        lists          : ["ul", "ol", "dl"], //false or array
-        special        : ["abbr", "code", "hr"], //false or array
-        colors         : "class", //class, inline or false
-        hyperlink      : true, //boolean
-        customComponents : [] //Array of customComponent objects
+        wysiwyg          : true, //boolean
+        textMode         : true, //boolean
+        types            : ["basic", "header", "blocks", "lists", "special", "colors", "hyperlink"], //array
+        basic            : ["strong", "em", "mark", "sup", "sub", "del"], //false or array
+        header           : ["h1", "h2", "h3", "h4", "h5", "h6"], //false or array
+        blocks           : ["p", "blockquote", "pre"], //false or array
+        lists            : ["ul", "ol", "dl"], //false or array
+        special          : ["abbr", "code", "hr"], //false or array
+        colors           : "class", //class, inline or false
+        hyperlink        : true //boolean
       };
 
   var ElpmisException = (function elpmisExceptionWrapper(){
-
     var messages = [
       'The element {{0}} is already been used. Use the destroy method before set it again.'
     ];
@@ -38,6 +36,23 @@
     };
   })();
 
+  var ElpmisCustomComponent = (function elpmisCustomComponentWrapper(){
+    var customComponentsLength = 1;
+
+    return function elpmisCustomComponent(config, types){
+      if(typeof config == 'object' && config !== null){
+        this.name = config.name || "customComponent" + customComponentsLength;
+        this.element = config.element || "span"; //HTML element
+        this.class = config.class || "customClass" + customComponentsLength; //CSS class
+        this.type = types.indexOf(config.type) > -1 ? config.type : "special";
+
+        customComponentsLength++;
+      } else {
+        return false;
+      }
+    };
+  })();
+
   var ElpmisEditor = function elpmisEditor(selector, op){
 
     var elSelector = selector || '.elpmis',
@@ -46,7 +61,8 @@
 
         options = {},
         elements = [],
-        multipleElements = false;
+        multipleElements = false,
+        customComponents = [];
 
     function elpmisDestroy(){
       elpmisElements[elSelector] = false;
@@ -59,17 +75,9 @@
       //REMOVE THE EVENT LISTENERS
     }
 
-    function elpmisCustomComponent(config){
-      if(typeof config == 'object' && config !== null){
-        this.name = config.name || "customComponent" + options.customComponents.length;
-        this.element = config.element || "span"; //HTML element
-        this.class = config.class || "customClass" + options.customComponents.length; //CSS class
-        this.type = options.types.indexOf(config.type) > -1 ? config.type : "special";
-      }
-    }
-
     function elpmisAddCustomComponent(config){
-      options.customComponents.push(new elpmisCustomComponent(config));
+      var customComponent = new ElpmisCustomComponent(config, options.types);
+      if(customComponent) customComponents.push(customComponent);
     }
 
     if(typeof op == 'object' && op !== null){
@@ -109,6 +117,8 @@
       return {
         options            : options,
         elements           : elements,
+        customComponents   : customComponents,
+        
         destroy            : elpmisDestroy,
         addCustomComponent : elpmisAddCustomComponent
       };
