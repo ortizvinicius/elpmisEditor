@@ -6,11 +6,23 @@
 </head>
 <body>
 	<textarea name="textarea" class="textarea" id="textarea" cols="30" rows="10">Testando</textarea>
+  <textarea name="textarea2" class="textarea" id="textarea2" cols="30" rows="10">Testando2</textarea>
 
 	<script src="elpmisEditor.js"></script>
 	<script>
-    var editor = new ElpmisEditor(".textarea");
+  try {
+    var editor = ElpmisEditor(".textarea", {
+      silentMode: true
+    });
+    var editor2 = ElpmisEditor(".textarea", {
+      silentMode: true
+    });
+    editor.addCustomComponent();
+    editor.initAll();
     console.log(editor);
+  } catch(e){
+    console.error(e.name + ":", e.code, e.message);
+  }
 	</script>
 </body>
 </html>
