@@ -3,16 +3,18 @@
 
   var elpmisElements = [],
       optionsDefault = {
-        wysiwyg          : true, //boolean
-        textMode         : true, //boolean
-        types            : ["basic", "header", "blocks", "lists", "special", "colors", "hyperlink"], //array
-        basic            : ["strong", "em", "mark", "sup", "sub", "del"], //false or array
-        header           : ["h1", "h2", "h3", "h4", "h5", "h6"], //false or array
-        blocks           : ["p", "blockquote", "pre"], //false or array
-        lists            : ["ul", "ol", "dl"], //false or array
-        special          : ["abbr", "code", "hr"], //false or array
-        colors           : "class", //class, inline or false
-        hyperlink        : true //boolean
+        autoInit  : true, //boolean
+        wysiwyg   : true, //boolean
+        textMode  : true, //boolean
+        keyListen : true, //boolean
+        types     : ["basic", "header", "blocks", "lists", "special", "colors", "hyperlink"], //array
+        basic     : ["strong", "em", "mark", "sup", "sub", "del"], //false or array
+        header    : ["h1", "h2", "h3", "h4", "h5", "h6"], //false or array
+        blocks    : ["p", "blockquote", "pre"], //false or array
+        lists     : ["ul", "ol", "dl"], //false or array
+        special   : ["abbr", "code", "hr"], //false or array
+        colors    : "class", //class, inline or false
+        hyperlink : true //boolean
       };
 
   var ElpmisException = (function elpmisExceptionWrapper(){
@@ -64,22 +66,6 @@
         multipleElements = false,
         customComponents = [];
 
-    function elpmisDestroy(){
-      elpmisElements[elSelector] = false;
-      var destroyProperties = Object.keys(this);
-
-      destroyProperties.forEach(function destroyIterator(destroyProperty){
-        delete this[destroyProperty];
-      }, this);
-
-      //REMOVE THE EVENT LISTENERS
-    }
-
-    function elpmisAddCustomComponent(config){
-      var customComponent = new ElpmisCustomComponent(config, options.types);
-      if(customComponent) customComponents.push(customComponent);
-    }
-
     if(typeof op == 'object' && op !== null){
       Object.keys(optionsDefault).forEach(function optionsIterator(option){
         if(op.hasOwnProperty(option)){
@@ -91,7 +77,39 @@
     } else {
       options = optionsDefault;
     }
+
+    function elpmisAddCustomComponent(config){
+      var customComponent = new ElpmisCustomComponent(config, options.types);
+      if(customComponent) customComponents.push(customComponent);
+    }    
+
+    function elpmisAddKeyListeners(){
+      if(options.blocks.indexOf("p") > -1){
+        
+      }
+    }
     
+    function elpmisInit(element){
+      if(options.keyListen){
+        elpmisAddKeyListeners();
+      }
+    }
+
+    function elpmisInitAll(){
+      elements.forEach(elpmisInit);
+    }
+
+    function elpmisDestroy(){
+      elpmisElements[elSelector] = false;
+      var destroyProperties = Object.keys(this);
+
+      destroyProperties.forEach(function destroyIterator(destroyProperty){
+        delete this[destroyProperty];
+      }, this);
+
+      //REMOVE THE EVENT LISTENERS
+    }
+
     if(!elpmisElements[elSelector]){
       
       elpmisElements[elSelector] = true;
@@ -114,13 +132,20 @@
         });
       }
 
+      if(options.autoInit){
+        elpmisInitAll();
+      }
+
       return {
+        selector           : elSelector,
         options            : options,
         elements           : elements,
         customComponents   : customComponents,
-        
+
         destroy            : elpmisDestroy,
-        addCustomComponent : elpmisAddCustomComponent
+        addCustomComponent : elpmisAddCustomComponent,
+        init               : elpmisInit,
+        initAll            : elpmisInitAll
       };
 
     } else { //Element already used
