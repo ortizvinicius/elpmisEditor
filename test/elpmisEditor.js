@@ -10,13 +10,13 @@
         textMode   : true, //boolean
         keyListen  : true, //boolean
 
-        types      : ["basic", "header", "blocks", "lists", "special", "colors", "hyperlink"], //array
-        basic      : ["strong", "em", "mark", "sup", "sub", "del"], //false or array
-        header     : ["h1", "h2", "h3", "h4", "h5", "h6"], //false or array
-        blocks     : ["p", "blockquote", "pre"], //false or array
-        lists      : ["ul", "ol", "dl"], //false or array
-        special    : ["abbr", "code", "hr"], //false or array
-        colors     : "class", //class, inline or false
+        types      : ['basic', 'header', 'blocks', 'lists', 'special', 'colors', 'hyperlink'], //array
+        basic      : ['strong', 'em', 'mark', 'sup', 'sub', 'del', 'br'], //false or array
+        header     : ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'], //false or array
+        blocks     : ['p', 'blockquote', 'pre'], //false or array
+        lists      : ['ul', 'ol', 'dl'], //false or array
+        special    : ['abbr', 'code', 'hr'], //false or array
+        colors     : 'class', //class, inline or false
         hyperlink  : true //boolean
       };
 
@@ -39,12 +39,12 @@
     }
 
     return function elpmisException(code, placeholders){
-      this.name = "ElpmisError";
+      this.name = 'ElpmisError';
       this.code = code;
       this.message = getMessage(code, placeholders);
 
       this.logError = function(){
-        console.error(this.name + ":", this.code, this.message);
+        console.error(this.name + ':', this.code, this.message);
       };
     };
   })();
@@ -54,10 +54,10 @@
 
     return function elpmisCustomComponent(config, types){
       if(typeof config == 'object' && config !== null){
-        this.name = config.name || "customComponent" + customComponentsLength;
-        this.element = config.element || "span"; //HTML element
-        this.class = config.class || "customClass" + customComponentsLength; //CSS class
-        this.type = types.indexOf(config.type) > -1 ? config.type : "special";
+        this.name = config.name || 'customComponent' + customComponentsLength;
+        this.element = config.element || 'span'; //HTML element
+        this.class = config.class || 'customClass' + customComponentsLength; //CSS class
+        this.type = types.indexOf(config.type) > -1 ? config.type : 'special';
 
         customComponentsLength++;
       }
@@ -103,9 +103,86 @@
     }    
 
     function elpmisAddKeyListeners(element){
-      if(options.blocks.indexOf("p") > -1){
 
+      element.addEventListener('keypress', function elementKeyPress(event){  
+        
+        var key = event.which || event.keyCode,
+            shift = event.shiftKey;
+
+        if(options.blocks.indexOf('p') > -1){
+          
+          if(key === 13 && !shift){
+            event.preventDefault();
+            elpmisAddHTMLElement(element, {
+              element: 'p',
+              newLineBefore: true,
+              inline: false
+            });
+          }
+        }
+
+        if(options.basic.indexOf('br') > -1){
+          
+          if(key === 13 && shift){
+            event.preventDefault();
+            elpmisAddHTMLElement(element, {
+              element: 'br',
+              newLineAfter: true,
+              close: false
+            });
+          }
+        }
+
+      });
+    }
+
+    function elpmisAddHTMLElement(element, config){
+
+      if(element){
+        config = typeof config == 'object' ? config : {};
+        config.element = config.element || 'p'; //string
+        config.newLineBefore = config.hasOwnProperty('newLineBefore') ? config.newLineBefore : false; //boolean
+        config.newLineAfter = config.hasOwnProperty('newLineAfter') ? config.newLineAfter : false; //boolean
+        config.close = config.hasOwnProperty('close') ? config.close : true; //boolean
+        config.inline = config.hasOwnProperty('inline') ? config.inline : true; //boolean
+
+        var selectionStart = element.selectionStart,
+            newSelection = 0,
+            selectionEnd = element.selectionEnd,
+            elValue = element.value,
+            newValue = '';
+
+        if(config.inline){
+          newValue  = elValue.substring(0, selectionStart);
+          newValue += config.newLineBefore ? '\n' : '';
+          newValue += '<' + config.element + '>';
+          newValue += elValue.substring(selectionStart, selectionEnd);
+
+          if(config.newLineBefore) newSelection = newValue.length;
+          
+          newValue += config.close ? '</' + config.element + '>' : '';
+          newValue += config.newLineAfter ? '\n' : '';
+
+          if(config.newLineAfter) newSelection = newValue.length;
+
+          newValue += elValue.substring(selectionEnd);
+        } else {
+          newValue  = elValue;
+          newValue += config.newLineBefore ? '\n' : '';
+          newValue += '<' + config.element + '>';
+          
+          if(config.newLineBefore) newSelection = newValue.length;
+
+          newValue += config.close ? '</' + config.element + '>' : '';
+          newValue += config.newLineAfter ? '\n' : '';
+
+          if(config.newLineAfter) newSelection = newValue.length;
+        }
+
+        element.value = newValue;
+        element.selectionStart = element.selectionEnd = newSelection;
       }
+
     }
     
     function elpmisInit(element){
@@ -166,7 +243,8 @@
         destroy            : elpmisDestroy,
         addCustomComponent : elpmisAddCustomComponent,
         init               : elpmisInit,
-        initAll            : elpmisInitAll
+        initAll            : elpmisInitAll,
+        addHTMLElement     : elpmisAddHTMLElement
       };
 
     } else { //Element already used

@@ -8,21 +8,20 @@
 	<textarea name="textarea" class="textarea" id="textarea" cols="30" rows="10">Testando</textarea>
   <textarea name="textarea2" class="textarea" id="textarea2" cols="30" rows="10">Testando2</textarea>
 
+  <div id="testW"></div>
+
 	<script src="elpmisEditor.js"></script>
 	<script>
-  try {
     var editor = ElpmisEditor(".textarea", {
       silentMode: true
     });
-    var editor2 = ElpmisEditor(".textarea", {
-      silentMode: true
+
+    document.getElementById('textarea').addEventListener('change', function(){
+      document.getElementById('testW').innerHTML = document.getElementById('textarea').value;
     });
-    editor.addCustomComponent();
-    editor.initAll();
-    console.log(editor);
-  } catch(e){
-    console.error(e.name + ":", e.code, e.message);
-  }
+    document.getElementById('textarea').addEventListener('keyup', function(){
+      document.getElementById('testW').innerHTML = document.getElementById('textarea').value;
+    });
 	</script>
 </body>
 </html>
