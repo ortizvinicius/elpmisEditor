@@ -5,23 +5,14 @@
 	<title>Teste</title>
 </head>
 <body>
-	<textarea name="textarea" class="textarea" id="textarea" cols="30" rows="10">Testando</textarea>
-  <textarea name="textarea2" class="textarea" id="textarea2" cols="30" rows="10">Testando2</textarea>
-
-  <div id="testW"></div>
+	<textarea name="textarea" class="textarea" id="textarea" cols="100" rows="20">Testando</textarea>
+  
 
 	<script src="elpmisEditor.js"></script>
 	<script>
     var editor = ElpmisEditor(".textarea", {
       silentMode: true
-    });
-
-    document.getElementById('textarea').addEventListener('change', function(){
-      document.getElementById('testW').innerHTML = document.getElementById('textarea').value;
-    });
-    document.getElementById('textarea').addEventListener('keyup', function(){
-      document.getElementById('testW').innerHTML = document.getElementById('textarea').value;
-    });
+    });    
 	</script>
 </body>
 </html>

@@ -64,6 +64,46 @@
     };
   })();
 
+  var ElpmisWysiwygElement = function elpmisWysiwygElement(textareaElement){
+    
+    var domElement = document.createElement('div');
+    var self = this;
+
+    domElement.classList.add('elpmisWysiwygElement');
+    domElement.id = 'elpmisWysiwygElement' + textareaElement.elpmisId;
+    domElement.setAttribute('contenteditable', true);
+
+    this.updateWysiwyg = function updateWysiwyg(){
+      domElement.innerHTML = textareaElement.value;
+    };
+
+    this.updateTextarea = function updateTextarea(){
+      textareaElement.value = domElement.innerHTML;
+    };
+
+    this.add = function add(){
+      document.body.insertBefore(domElement, textareaElement);
+    };
+
+    this.watch = function watch(){
+      elpmisAddMultipleEventListeners(textareaElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
+        self.updateWysiwyg();
+      });
+      elpmisAddMultipleEventListeners(domElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
+        self.updateTextarea();
+      });
+    };
+
+    this.updateWysiwyg();
+
+  };
+
+  function elpmisAddMultipleEventListeners(element, events, eventFunction){
+    events.forEach(function(event){
+      element.addEventListener(event, eventFunction);
+    });
+  }
+
   var ElpmisEditor = function elpmisEditor(selector, op){
 
     var elSelector = selector || '.elpmis',
@@ -71,10 +111,12 @@
         elSelectorName = elSelector.substr(1),
 
         options = {},
+        status = false,
+
         elements = [],
         multipleElements = false,
         customComponents = [],
-        status = false;
+        wysiwygElements = [];
 
     if(typeof op == 'object' && op !== null){
       Object.keys(optionsDefault).forEach(function optionsIterator(option){
@@ -184,11 +226,23 @@
       }
 
     }
+
+    function addElpmisWysiwyg(element){
+      var elpmisId = element.elpmisId;
+      wysiwygElements[elpmisId] = new ElpmisWysiwygElement(element);
+      wysiwygElements[elpmisId].add();
+      wysiwygElements[elpmisId].watch();
+    }
     
     function elpmisInit(element){
       if(!status) status = true;
+
       if(options.keyListen){
         elpmisAddKeyListeners(element);
+      }
+
+      if(options.wysiwyg){
+        addElpmisWysiwyg(element);
       }
     }
 
@@ -229,6 +283,10 @@
         });
       }
 
+      elements.forEach(function elementsIdIterator(element, index){
+        element.elpmisId = index;
+      });
+
       if(options.autoInit){
         elpmisInitAll();
       }
@@ -239,6 +297,7 @@
         options            : options,
         elements           : elements,
         customComponents   : customComponents,
+        wysiwygElements    : wysiwygElements,
 
         destroy            : elpmisDestroy,
         addCustomComponent : elpmisAddCustomComponent,
