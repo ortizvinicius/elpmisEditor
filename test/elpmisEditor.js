@@ -79,7 +79,7 @@
       domElement.innerHTML = textareaElement.value;
     };
 
-    this.add = function add(){
+    this.addToDOM = function addToDOM(){
       document.body.insertBefore(domElement, textareaElement);
     };
 
@@ -225,7 +225,7 @@
     function addElpmisPreviewElement(element){
       var elpmisId = element.elpmisId;
       previewElements[elpmisId] = new ElpmisPreviewElement(element);
-      previewElements[elpmisId].add();
+      previewElements[elpmisId].addToDOM();
       previewElements[elpmisId].watch();
     }
     
