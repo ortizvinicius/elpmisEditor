@@ -6,7 +6,7 @@
         autoInit   : true, //boolean
         silentMode : false, //boolean
 
-        wysiwyg    : true, //boolean
+        previewMode: true, //boolean
         textMode   : true, //boolean
         keyListen  : true, //boolean
 
@@ -64,21 +64,19 @@
     };
   })();
 
-  var ElpmisWysiwygElement = function elpmisWysiwygElement(textareaElement){
+  var ElpmisPreviewElement = function elpmisPreviewElement(textareaElement){
     
     var domElement = document.createElement('div');
     var self = this;
 
-    domElement.classList.add('elpmisWysiwygElement');
-    domElement.id = 'elpmisWysiwygElement' + textareaElement.elpmisId;
-    domElement.setAttribute('contenteditable', true);
+    domElement.classList.add('elpmisPreviewElement');
+    domElement.classList.add('active');
+    domElement.id = 'elpmisPreviewElement' + textareaElement.elpmisId;
+    
+    //TOOGLE BUTTON and METHOD
 
-    this.updateWysiwyg = function updateWysiwyg(){
+    this.updatePreview = function updatePreview(){
       domElement.innerHTML = textareaElement.value;
-    };
-
-    this.updateTextarea = function updateTextarea(){
-      textareaElement.value = domElement.innerHTML;
     };
 
     this.add = function add(){
@@ -87,14 +85,11 @@
 
     this.watch = function watch(){
       elpmisAddMultipleEventListeners(textareaElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
-        self.updateWysiwyg();
-      });
-      elpmisAddMultipleEventListeners(domElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
-        self.updateTextarea();
+        self.updatePreview();
       });
     };
 
-    this.updateWysiwyg();
+    this.updatePreview();
 
   };
 
@@ -116,7 +111,7 @@
         elements = [],
         multipleElements = false,
         customComponents = [],
-        wysiwygElements = [];
+        previewElements = [];
 
     if(typeof op == 'object' && op !== null){
       Object.keys(optionsDefault).forEach(function optionsIterator(option){
@@ -227,11 +222,11 @@
 
     }
 
-    function addElpmisWysiwyg(element){
+    function addElpmisPreviewElement(element){
       var elpmisId = element.elpmisId;
-      wysiwygElements[elpmisId] = new ElpmisWysiwygElement(element);
-      wysiwygElements[elpmisId].add();
-      wysiwygElements[elpmisId].watch();
+      previewElements[elpmisId] = new ElpmisPreviewElement(element);
+      previewElements[elpmisId].add();
+      previewElements[elpmisId].watch();
     }
     
     function elpmisInit(element){
@@ -241,8 +236,8 @@
         elpmisAddKeyListeners(element);
       }
 
-      if(options.wysiwyg){
-        addElpmisWysiwyg(element);
+      if(options.previewMode){
+        addElpmisPreviewElement(element);
       }
     }
 
@@ -297,7 +292,7 @@
         options            : options,
         elements           : elements,
         customComponents   : customComponents,
-        wysiwygElements    : wysiwygElements,
+        previewElements    : previewElements,
 
         destroy            : elpmisDestroy,
         addCustomComponent : elpmisAddCustomComponent,
