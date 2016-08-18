@@ -10,10 +10,7 @@ var reload = browserSync.reload;
 var files = {
 	watch: "./src/*",
 	testWatch: "./test/*",
-	concat: [
-		'./src/model/*.js',
-		'./src/lib/*.js'
-	],
+	concat: './src/lib/*',
 	wrapper: './src/elpmisEditor.js',
 	destiny: './dist/elpmisEditor.min.js'
 }
