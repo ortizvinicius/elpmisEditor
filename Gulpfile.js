@@ -10,13 +10,14 @@ var reload = browserSync.reload;
 var files = {
 	watch: "./src/*",
 	testWatch: "./test/*",
-	concat: './src/lib/*',
+	concat: './src/lib/*.js',
 	wrapper: './src/elpmisEditor.js',
 	destiny: './dist/elpmisEditor.min.js'
 }
 
 gulp.task('lint', function() {
 	gulp.src(files.concat)
+	.pipe(concat('elpmisEditor.min.js'))
 	.pipe(wrap({src:files.wrapper}))
 	.pipe(jshint())
 	.pipe(jshint.reporter('default'));
@@ -24,17 +25,16 @@ gulp.task('lint', function() {
  
 gulp.task('dist', function() {
 	gulp.src(files.concat)
+	.pipe(concat('elpmisEditor.min.js'))
 	.pipe(wrap({src:files.wrapper}))
-	.pipe(concat('./dist'))
-	.pipe(rename('elpmisEditor.min.js'))
-	//.pipe(uglify())
+	.pipe(uglify())
 	.pipe(gulp.dest('./dist'));
 });
 
 gulp.task('test', function() {
 	gulp.src(files.concat)
-	.pipe(wrap({src:files.wrapper}))
 	.pipe(concat('elpmisEditor.js'))
+	.pipe(wrap({src:files.wrapper}))
 	.pipe(gulp.dest('./test'));
 });
 
