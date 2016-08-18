@@ -233,6 +233,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
           addHTMLElement(element, {
             element: 'p',
             newLineBefore: true,
+            newLineAfter: true,
             inline: false
           });
         }
@@ -283,38 +284,70 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       //Search for the caret position
       var selectionStart = element.selectionStart,
           selectionEnd = element.selectionEnd,
+          selectionRangeText = '',
+          lineRangeText,
+          linesToStart,
+          linesAfterEnd,
 
           newSelection = 0,
           elValue = element.value,
-          newValue = '';
+          newValue = '',
+          hasTag = false,
+          tagCheck = /<*>/i;
+
+      //check if was selected a text part
+      if(selectionStart !== selectionEnd){
+        selectionRangeText = elValue.substring(selectionStart, selectionEnd);
+
+        //Check if the range text has a tag
+        hasTag = tagCheck.test(selectionRangeText);
+      }
+
+      linesToStart = elValue.substring(0, selectionStart).split('\n');
+      linesAfterEnd = elValue.substring(selectionEnd).split('\n');
+
+      //Gets the entire line
+      lineRangeText = linesToStart[linesToStart.length - 1] + selectionRangeText + linesAfterEnd[0];
+      
+      //Check if the entire line has a tag
+      if(!hasTag) hasTag = tagCheck.test(lineRangeText);
 
       //If it is an inline element (like a br)
-      if(config.inline){
+      if(config.inline || (selectionRangeText !== '' && !hasTag)){
         newValue  = elValue.substring(0, selectionStart);
-        newValue += config.newLineBefore ? '\n' : '';
+        newValue += config.inline && config.newLineBefore ? '\n' : '';
         newValue += '<' + config.element + '>';
         newValue += elValue.substring(selectionStart, selectionEnd);
 
         if(config.newLineBefore) newSelection = newValue.length;
         
         newValue += config.close ? '</' + config.element + '>' : '';
-        newValue += config.newLineAfter ? '\n' : '';
+        newValue += config.inline && config.newLineAfter ? '\n' : '';
 
         if(config.newLineAfter) newSelection = newValue.length;
 
         newValue += elValue.substring(selectionEnd);
 
       } else {
-        newValue  = elValue;
+        
+        //Remove the last line
+        linesToStart.pop();
+
+        //Remove the first line
+        linesAfterEnd.shift();
+
+        newValue  = linesToStart.join('\n');
+        newValue += config.newLineBefore ? '\n' : '';
+        newValue += lineRangeText;
         newValue += config.newLineBefore ? '\n' : '';
         newValue += '<' + config.element + '>';
         
-        if(config.newLineBefore) newSelection = newValue.length;
+        newSelection = newValue.length;
 
         newValue += config.close ? '</' + config.element + '>' : '';
         newValue += config.newLineAfter ? '\n' : '';
+        newValue += linesAfterEnd.join('\n');
 
-        if(config.newLineAfter) newSelection = newValue.length;
       }
 
       element.value = newValue;
