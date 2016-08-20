@@ -3,3 +3,10 @@ function addMultipleEventListeners(element, events, eventFunction){
     element.addEventListener(event, eventFunction);
   });
 }
+
+function newElpmisException(code, placeholders){
+  var exception = Object.create(ElpmisException);
+  exception.init(code, placeholders);
+
+  return exception;
+}

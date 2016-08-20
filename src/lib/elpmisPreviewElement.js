@@ -1,36 +1,35 @@
-/**
- * Construct an ElpmisPreviewElement object
- *
- * @param {HTMLElement} textareaElement
- */
-var ElpmisPreviewElement = function elpmisPreviewElement(textareaElement){
-    
-  var domElement = document.createElement('div');
-  var self = this;
+var ElpmisPreviewElement = {
 
-  domElement.classList.add('elpmisPreviewElement');
-  domElement.classList.add('active');
-  domElement.id = 'elpmisPreviewElement' + textareaElement.elpmisId;
-  
-  //TOOGLE BUTTON and METHOD
+  /**
+   * @param {HTMLElement} textareaElement
+   */
+  init: function initFn(textareaElement){
+
+    this.textareaElement = textareaElement;
+    this.domElement = document.createElement('div');
+
+    this.domElement.classList.add('elpmisPreviewElement');
+    this.domElement.classList.add('active');
+    this.domElement.id = 'elpmisPreviewElement' + this.textareaElement.elpmisId;
+  },
 
   //Update the content according to textarea value
-  this.updatePreview = function updatePreview(){
-    domElement.innerHTML = textareaElement.value;
-  };
+  updatePreview: function updatePreview(){
+    this.domElement.innerHTML = this.textareaElement.value;
+  },
 
   //Add the preview element to DOM, just before the textarea element
-  this.addToDOM = function addToDOM(){
-    document.body.insertBefore(domElement, textareaElement);
-  };
+  addToDOM: function addToDOM(){
+    document.body.insertBefore(this.domElement, this.textareaElement);
+  },
 
   //Watchs for changes in textarea element value
-  this.watch = function watch(){
-    addMultipleEventListeners(textareaElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
+  watch: function watch(){
+    var self = this;
+    addMultipleEventListeners(self.textareaElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
       self.updatePreview();
     });
-  };
-
-  this.updatePreview();
+  }
 
 };
+

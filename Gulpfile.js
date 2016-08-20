@@ -17,7 +17,7 @@ var files = {
 
 gulp.task('lint', function() {
 	gulp.src(files.concat)
-	.pipe(concat('elpmisEditor.min.js'))
+	.pipe(concat('elpmisEditor.js'))
 	.pipe(wrap({src:files.wrapper}))
 	.pipe(jshint())
 	.pipe(jshint.reporter('default'));
@@ -25,8 +25,10 @@ gulp.task('lint', function() {
  
 gulp.task('dist', function() {
 	gulp.src(files.concat)
-	.pipe(concat('elpmisEditor.min.js'))
+	.pipe(concat('elpmisEditor.js'))
 	.pipe(wrap({src:files.wrapper}))
+	.pipe(gulp.dest('./dist'))
+	.pipe(rename('elpmisEditor.min.js'))
 	.pipe(uglify())
 	.pipe(gulp.dest('./dist'));
 });

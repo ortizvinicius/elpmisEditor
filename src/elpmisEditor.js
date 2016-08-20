@@ -9,7 +9,7 @@ var elpmisElements = [],
       autoInit   : true,
 
       //{boolean} - If true Exceptions will not be thrown, instead the errors will just be logged
-      silentMode : false,
+      silentMode : true,
 
       //{boolean} - If true creates a div that changes as the user type in the textarea with its value
       previewMode: true,
@@ -100,13 +100,14 @@ var ElpmisEditor = function elpmisEditor(selector, op){
     //Only creates the element if it was not already initated
     if(!status){
       config = typeof config == 'object' ? config : {};
-      var customComponent = new ElpmisCustomComponent(config, options.types);
+      var customComponent = Object.create(ElpmisCustomComponent);
+      customComponent.init(config, options.types);
       if(customComponent) customComponents.push(customComponent);
     } else {
       if(!options.silentMode){
-        throw new ElpmisException(1);
+        throw newElpmisException(2);
       } else {
-        new ElpmisException(1).logError();
+        newElpmisException(2).logError();
       }
     }
   }    
@@ -261,7 +262,9 @@ var ElpmisEditor = function elpmisEditor(selector, op){
    */
   function addPreviewElement(element){
     var elpmisId = element.elpmisId;
-    previewElements[elpmisId] = new ElpmisPreviewElement(element);
+    previewElements[elpmisId] = Object.create(ElpmisPreviewElement);
+    previewElements[elpmisId].init(element);
+    previewElements[elpmisId].updatePreview();
     previewElements[elpmisId].addToDOM();
     previewElements[elpmisId].watch();
   }
@@ -366,9 +369,9 @@ var ElpmisEditor = function elpmisEditor(selector, op){
 
   } else {
     if(!options.silentMode){
-      throw new ElpmisException(0, [elSelector]);
+      throw newElpmisException(1, [elSelector]);
     } else {
-      new ElpmisException(0, [elSelector]).logError();
+      newElpmisException(1, [elSelector]).logError();
     }
   }
 
