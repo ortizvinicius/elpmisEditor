@@ -1,28 +1,14 @@
-var ElpmisException = {
+var ElpmisException = Object.create(Error);
 
-  name: 'ElpmisError',
-  code: 0,
-  placeholders: false,
+Object.defineProperty(ElpmisException, 'name', {
+  enumerable: true,
+  value: 'ElpmisError'
+});
 
-  /**
-   * Inits the object
-   *
-   * @param {int} code
-   * @param {array of string} placeholders
-   */
-  init: function initFn(code, placeholders){
-    this.code = code;
-    this.placeholders = placeholders;
-  },
-
-  /**
-   * Log the error in browser console
-   */
-  logError: function logErrorFn(){
-    console.error(this.name + ':', this.code, this.message);
-  }
-
-};
+Object.defineProperty(ElpmisException, 'started', {
+  writable: true,
+  value: false,
+});
 
 Object.defineProperty(ElpmisException, 'messages', {
   value: [
@@ -38,15 +24,48 @@ Object.defineProperty(ElpmisException, 'message', {
   /**
    * Get a message from the list based on the code (index) and put the placeholders inside it
    */
-  get: function getMessage(){
-    var message = this.messages[this.code];
+  get: function elpmisExceptionGetMessage(){
+    if(this.started){
+      var message = this.messages[this.code];
 
-    if(this.placeholders){
-      this.placeholders.forEach(function placeholdersIterator(placeholder, placeholderIndex){
-        message = message.split('{{' + placeholderIndex + '}}').join(placeholder);
-      });
+      if(this.placeholders){
+        this.placeholders.forEach(function placeholdersIterator(placeholder, placeholderIndex){
+          message = message.split('{{' + placeholderIndex + '}}').join(placeholder);
+        });
+      }
+
+      return message;
+    } else {
+      return false;
     }
+  }
+});
 
-    return message;
+Object.defineProperty(ElpmisException, 'init', {
+  enumerable: true,
+  /**
+   * Inits the object
+   *
+   * @param {int} code
+   * @param {array of string} placeholders
+   */
+  value: function elpmisExceptionInit(code, placeholders){
+    if(!this.started){
+      this.started = true;
+      this.code = code;
+      this.placeholders = placeholders;
+    }
+  }
+});
+
+Object.defineProperty(ElpmisException, 'logError', {
+  enumerable: true,
+  /**
+   * Log the error in browser console
+   */
+  value: function elpmisExceptionLogError(){
+    if(this.started){
+      console.error(this.name + ':', this.code, this.message);
+    }
   }
 });

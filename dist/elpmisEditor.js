@@ -43,7 +43,8 @@ var ElpmisCustomComponent = (function elpmisCustomComponentWrapper(){
      * @param {object} config
      * @param {array of string} types - The main function options.types array
      */
-    init: function initFn(config, types){
+    init: function elpmisCustomComponentInit(config, types){
+      
       if(typeof config === 'object' && config !== null){
         //{string}
         this.name = config.name || 'customComponent' + customComponentsLength;
@@ -58,36 +59,24 @@ var ElpmisCustomComponent = (function elpmisCustomComponentWrapper(){
         this.type = types.indexOf(config.type) > -1 ? config.type : 'special';
 
         customComponentsLength++;
+
+        this.init = false;
       }
     }
   };
 
 })();
-var ElpmisException = {
+var ElpmisException = Object.create(Error);
 
-  name: 'ElpmisError',
-  code: 0,
-  placeholders: false,
+Object.defineProperty(ElpmisException, 'name', {
+  enumerable: true,
+  value: 'ElpmisError'
+});
 
-  /**
-   * Inits the object
-   *
-   * @param {int} code
-   * @param {array of string} placeholders
-   */
-  init: function initFn(code, placeholders){
-    this.code = code;
-    this.placeholders = placeholders;
-  },
-
-  /**
-   * Log the error in browser console
-   */
-  logError: function logErrorFn(){
-    console.error(this.name + ':', this.code, this.message);
-  }
-
-};
+Object.defineProperty(ElpmisException, 'started', {
+  writable: true,
+  value: false,
+});
 
 Object.defineProperty(ElpmisException, 'messages', {
   value: [
@@ -103,16 +92,49 @@ Object.defineProperty(ElpmisException, 'message', {
   /**
    * Get a message from the list based on the code (index) and put the placeholders inside it
    */
-  get: function getMessage(){
-    var message = this.messages[this.code];
+  get: function elpmisExceptionGetMessage(){
+    if(this.started){
+      var message = this.messages[this.code];
 
-    if(this.placeholders){
-      this.placeholders.forEach(function placeholdersIterator(placeholder, placeholderIndex){
-        message = message.split('{{' + placeholderIndex + '}}').join(placeholder);
-      });
+      if(this.placeholders){
+        this.placeholders.forEach(function placeholdersIterator(placeholder, placeholderIndex){
+          message = message.split('{{' + placeholderIndex + '}}').join(placeholder);
+        });
+      }
+
+      return message;
+    } else {
+      return false;
     }
+  }
+});
 
-    return message;
+Object.defineProperty(ElpmisException, 'init', {
+  enumerable: true,
+  /**
+   * Inits the object
+   *
+   * @param {int} code
+   * @param {array of string} placeholders
+   */
+  value: function elpmisExceptionInit(code, placeholders){
+    if(!this.started){
+      this.started = true;
+      this.code = code;
+      this.placeholders = placeholders;
+    }
+  }
+});
+
+Object.defineProperty(ElpmisException, 'logError', {
+  enumerable: true,
+  /**
+   * Log the error in browser console
+   */
+  value: function elpmisExceptionLogError(){
+    if(this.started){
+      console.error(this.name + ':', this.code, this.message);
+    }
   }
 });
 
@@ -125,7 +147,7 @@ function addMultipleEventListeners(element, events, eventFunction){
 function newElpmisException(code, placeholders){
   var exception = Object.create(ElpmisException);
   exception.init(code, placeholders);
-
+  
   return exception;
 }
 var ElpmisPreviewElement = {
@@ -133,32 +155,37 @@ var ElpmisPreviewElement = {
   /**
    * @param {HTMLElement} textareaElement
    */
-  init: function initFn(textareaElement){
-
+  init: function elpmisPreviewElementInit(textareaElement){
     this.textareaElement = textareaElement;
     this.domElement = document.createElement('div');
 
     this.domElement.classList.add('elpmisPreviewElement');
     this.domElement.classList.add('active');
     this.domElement.id = 'elpmisPreviewElement' + this.textareaElement.elpmisId;
+
+    this.init = false;
   },
 
+  //TOOGLE BUTTON AND METHOD
+
   //Update the content according to textarea value
-  updatePreview: function updatePreview(){
+  updatePreview: function elpmisPreviewElementUpdatePreview(){
     this.domElement.innerHTML = this.textareaElement.value;
   },
 
   //Add the preview element to DOM, just before the textarea element
-  addToDOM: function addToDOM(){
+  addToDOM: function elpmisPreviewElementAddToDOM(){
     document.body.insertBefore(this.domElement, this.textareaElement);
   },
 
   //Watchs for changes in textarea element value
-  watch: function watch(){
+  watch: function elpmisPreviewElementWatch(){
     var self = this;
     addMultipleEventListeners(self.textareaElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
       self.updatePreview();
     });
+
+    //TOOGLE on textarea focus/blur
   }
 
 };
@@ -228,10 +255,13 @@ var ElpmisEditor = function elpmisEditor(selector, op){
 
     //Only creates the element if it was not already initated
     if(!status){
+    
       config = typeof config == 'object' ? config : {};
       var customComponent = Object.create(ElpmisCustomComponent);
       customComponent.init(config, options.types);
+      
       if(customComponent) customComponents.push(customComponent);
+    
     } else {
       if(!options.silentMode){
         throw newElpmisException(2);
@@ -404,14 +434,15 @@ var ElpmisEditor = function elpmisEditor(selector, op){
    * @param {string} element
    */
   function init(element){
-    if(!status) status = true;
+    if(!status){
+      status = true;
+      if(options.keyListen){
+        addKeyListeners(element);
+      }
 
-    if(options.keyListen){
-      addKeyListeners(element);
-    }
-
-    if(options.previewMode){
-      addPreviewElement(element);
+      if(options.previewMode){
+        addPreviewElement(element);
+      }
     }
   }
 

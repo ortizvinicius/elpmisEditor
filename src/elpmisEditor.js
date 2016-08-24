@@ -99,10 +99,13 @@ var ElpmisEditor = function elpmisEditor(selector, op){
 
     //Only creates the element if it was not already initated
     if(!status){
+    
       config = typeof config == 'object' ? config : {};
       var customComponent = Object.create(ElpmisCustomComponent);
       customComponent.init(config, options.types);
+      
       if(customComponent) customComponents.push(customComponent);
+    
     } else {
       if(!options.silentMode){
         throw newElpmisException(2);
@@ -275,14 +278,15 @@ var ElpmisEditor = function elpmisEditor(selector, op){
    * @param {string} element
    */
   function init(element){
-    if(!status) status = true;
+    if(!status){
+      status = true;
+      if(options.keyListen){
+        addKeyListeners(element);
+      }
 
-    if(options.keyListen){
-      addKeyListeners(element);
-    }
-
-    if(options.previewMode){
-      addPreviewElement(element);
+      if(options.previewMode){
+        addPreviewElement(element);
+      }
     }
   }
 

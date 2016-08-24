@@ -7,7 +7,8 @@ var ElpmisCustomComponent = (function elpmisCustomComponentWrapper(){
      * @param {object} config
      * @param {array of string} types - The main function options.types array
      */
-    init: function initFn(config, types){
+    init: function elpmisCustomComponentInit(config, types){
+      
       if(typeof config === 'object' && config !== null){
         //{string}
         this.name = config.name || 'customComponent' + customComponentsLength;
@@ -22,6 +23,8 @@ var ElpmisCustomComponent = (function elpmisCustomComponentWrapper(){
         this.type = types.indexOf(config.type) > -1 ? config.type : 'special';
 
         customComponentsLength++;
+
+        this.init = false;
       }
     }
   };
