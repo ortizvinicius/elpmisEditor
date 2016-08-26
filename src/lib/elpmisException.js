@@ -12,7 +12,7 @@ Object.defineProperty(ElpmisException, 'started', {
 
 Object.defineProperty(ElpmisException, 'messages', {
   value: [
-    'The code was not defined.',
+    'The number was not defined.',
     'The element {{0}} is already been used. Use the destroy method before set it again.',
     'Cannot add a customComponent to an element already started, set the autoInit option to false, add the customComponent then use init() or initAll(). You can look at the status property to check if the element was already started.'
   ]
@@ -22,11 +22,11 @@ Object.defineProperty(ElpmisException, 'message', {
   enumerable: true,
 
   /**
-   * Get a message from the list based on the code (index) and put the placeholders inside it
+   * Get a message from the list based on the number (index) and put the placeholders inside it
    */
   get: function elpmisExceptionGetMessage(){
     if(this.started){
-      var message = this.messages[this.code];
+      var message = this.messages[this.number];
 
       if(this.placeholders){
         this.placeholders.forEach(function placeholdersIterator(placeholder, placeholderIndex){
@@ -46,14 +46,15 @@ Object.defineProperty(ElpmisException, 'init', {
   /**
    * Inits the object
    *
-   * @param {int} code
+   * @param {int} number
    * @param {array of string} placeholders
    */
-  value: function elpmisExceptionInit(code, placeholders){
+  value: function elpmisExceptionInit(number, placeholders){
     if(!this.started){
       this.started = true;
-      this.code = code;
+      this.number = number;
       this.placeholders = placeholders;
+      this.stack = (new Error()).stack;
     }
   }
 });
@@ -65,7 +66,7 @@ Object.defineProperty(ElpmisException, 'logError', {
    */
   value: function elpmisExceptionLogError(){
     if(this.started){
-      console.error(this.name + ':', this.code, this.message);
+      console.error(this.name + ':', this.number, this.message);
     }
   }
 });

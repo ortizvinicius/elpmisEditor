@@ -9,7 +9,13 @@
 
   <script src="elpmisEditor.js"></script>
   <script>
-  var editor = ElpmisEditor(".textarea");    
+  try { 
+  	var editor = ElpmisEditor(".textarea");   
+  	editor.addCustomComponent(); 
+  } catch (e){
+  	console.log(e.name, e.message);
+  	console.log(e.stack);
+  }
   </script>
 </body>
 </html>
