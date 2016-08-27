@@ -1,32 +1,27 @@
-var ElpmisCustomComponent = (function elpmisCustomComponentWrapper(){
-  var customComponentsLength = 1;
+var ElpmisCustomComponent = {
 
-  return {
+  customComponentsLength: 0,
 
-    /**
-     * @param {object} config
-     * @param {array of string} types - The main function options.types array
-     */
-    init: function elpmisCustomComponentInit(config, types){
+  init: function elpmisCustomComponentInit(config, types){
       
-      if(typeof config === 'object' && config !== null){
-        //{string}
-        this.name = config.name || 'customComponent' + customComponentsLength;
+    if(typeof config === 'object' && config !== null){
 
-        //{string} HTML element
-        this.element = config.element || 'span';
+      this.id = ++ElpmisCustomComponent.customComponentsLength;
 
-        //{string} CSS class
-        this.class = config.class || 'customClass' + customComponentsLength; 
+      //{string}
+      this.name = config.name || 'customComponent' + this.id;
 
-        //{string} - Test if the type given is in the types array
-        this.type = types.indexOf(config.type) > -1 ? config.type : 'special';
+      //{string} HTML element
+      this.element = config.element || 'span';
 
-        customComponentsLength++;
+      //{string} CSS class
+      this.class = config.class || 'customClass' + this.id; 
 
-        this.init = false;
-      }
+      //{string} - Test if the type given is in the types array
+      this.type = types.indexOf(config.type) > -1 ? config.type : 'special';
+
+      this.init = function(){ return false; };
     }
-  };
+  }
 
-})();
+};

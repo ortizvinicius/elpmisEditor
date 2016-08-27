@@ -11,7 +11,7 @@ var ElpmisPreviewElement = {
     this.domElement.classList.add('active');
     this.domElement.id = 'elpmisPreviewElement' + this.textareaElement.elpmisId;
 
-    this.init = false;
+    this.init = function(){ return false; };
   },
 
   //TOOGLE BUTTON AND METHOD
