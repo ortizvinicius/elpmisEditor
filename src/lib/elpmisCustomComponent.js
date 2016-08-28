@@ -1,6 +1,8 @@
 var ElpmisCustomComponent = {
 
   customComponentsLength: 0,
+  element: 'span',
+  type: 'special',
 
   init: function elpmisCustomComponentInit(config, types){
       
@@ -12,13 +14,13 @@ var ElpmisCustomComponent = {
       this.name = config.name || 'customComponent' + this.id;
 
       //{string} HTML element
-      this.element = config.element || 'span';
+      if(config.element) this.element = config.element;
 
       //{string} CSS class
       this.class = config.class || 'customClass' + this.id; 
 
       //{string} - Test if the type given is in the types array
-      this.type = types.indexOf(config.type) > -1 ? config.type : 'special';
+      if(types.indexOf(config.type) > -1) this.type = config.type;
 
       this.init = function(){ return false; };
     }
