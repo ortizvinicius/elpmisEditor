@@ -10,15 +10,15 @@
   <script src="elpmisEditor.js"></script>
   <script>
   try { 
-  	var editor = ElpmisEditor(".textarea", { autoInit:false });   
+  	var editor = ElpmisEditor(".textarea", { autoInit:true, silentMode:false });   
   	editor.addCustomComponent(); 
     editor.addCustomComponent(); 
     editor.addCustomComponent(); 
     console.log(editor);
     editor.initAll();
   } catch (e){
-  	console.log(e.name, e.message);
-  	console.log(e.stack);
+  	console.log(e.toString());
+    console.log(e.stack);
   }
   </script>
 </body>

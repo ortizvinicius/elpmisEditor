@@ -51,10 +51,14 @@ Object.defineProperty(ElpmisException, 'init', {
    */
   value: function elpmisExceptionInit(number, placeholders){
     if(!this.started){
+
+      var error = new Error();
+
       this.started = true;
       this.number = number;
       this.placeholders = placeholders;
-      this.stack = (new Error()).stack;
+      this.stack = error.stack;
+      this.toString = error.toString;
     }
   }
 });
