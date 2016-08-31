@@ -63,12 +63,9 @@ var ElpmisCustomComponent = {
   }
 
 };
-var ElpmisException = Object.create(Error);
+var ElpmisException = Object.create(Error.prototype);
 
 Object.defineProperties(ElpmisException, {
-  'toString': {
-    value: ElpmisException.prototype.toString
-  },
   'name': {
     enumerable: true,
     value: 'ElpmisError'
@@ -107,7 +104,7 @@ Object.defineProperties(ElpmisException, {
     }
   },
   'init': {
-    enumerable: true,
+    
     /**
      * Inits the object
      *
@@ -119,19 +116,6 @@ Object.defineProperties(ElpmisException, {
         this.started = true;
         this.number = number;
         this.placeholders = placeholders;
-        this.stack = (new Error()).stack;
-      }
-    }
-  },
-  'logError': {
-    enumerable: true,
-    /**
-     * Log the error in browser console
-     */
-    value: function elpmisExceptionLogError(){
-      if(this.started){
-        console.log(this.toString());
-        console.log(this.stack);
       }
     }
   }
@@ -265,7 +249,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       if(!options.silentMode){
         throw newElpmisException(2);
       } else {
-        newElpmisException(2).logError();
+        var ex = newElpmisException(2);
+        console.error(ex.toString());
       }
     }
   }    
@@ -530,7 +515,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
     if(!options.silentMode){
       throw newElpmisException(1, [elSelector]);
     } else {
-      newElpmisException(1, [elSelector]).logError();
+      var ex = newElpmisException(1, [elSelector]);
+      console.error(ex.toString());
     }
   }
 

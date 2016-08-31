@@ -110,7 +110,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       if(!options.silentMode){
         throw newElpmisException(2);
       } else {
-        newElpmisException(2).logError();
+        var ex = newElpmisException(2);
+        console.error(ex.toString());
       }
     }
   }    
@@ -375,7 +376,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
     if(!options.silentMode){
       throw newElpmisException(1, [elSelector]);
     } else {
-      newElpmisException(1, [elSelector]).logError();
+      var ex = newElpmisException(1, [elSelector]);
+      console.error(ex.toString());
     }
   }
 

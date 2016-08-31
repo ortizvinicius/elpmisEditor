@@ -1,9 +1,6 @@
-var ElpmisException = Object.create(Error);
+var ElpmisException = Object.create(Error.prototype);
 
 Object.defineProperties(ElpmisException, {
-  'toString': {
-    value: ElpmisException.prototype.toString
-  },
   'name': {
     enumerable: true,
     value: 'ElpmisError'
@@ -42,7 +39,7 @@ Object.defineProperties(ElpmisException, {
     }
   },
   'init': {
-    enumerable: true,
+    
     /**
      * Inits the object
      *
@@ -54,19 +51,6 @@ Object.defineProperties(ElpmisException, {
         this.started = true;
         this.number = number;
         this.placeholders = placeholders;
-        this.stack = (new Error()).stack;
-      }
-    }
-  },
-  'logError': {
-    enumerable: true,
-    /**
-     * Log the error in browser console
-     */
-    value: function elpmisExceptionLogError(){
-      if(this.started){
-        console.log(this.toString());
-        console.log(this.stack);
       }
     }
   }

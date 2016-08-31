@@ -10,14 +10,9 @@
   <script src="elpmisEditor.js"></script>
   <script>
   try { 
-  	var editor = ElpmisEditor(".textarea", { autoInit:false });   
-  	editor.addCustomComponent(); 
-    editor.addCustomComponent(); 
-    editor.addCustomComponent(); 
-    editor.initAll();
+  	var editor = ElpmisEditor(".textarea", { autoInit:true });  
   } catch (e){
-  	console.log(e.toString());
-    console.log(e.stack);
+  	console.error(e.toString());
   }
   </script>
 </body>

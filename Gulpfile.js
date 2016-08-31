@@ -8,7 +8,7 @@ var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 
 var files = {
-	watch: "./src/*",
+	watch: "./src/**/*",
 	testWatch: "./test/*",
 	concat: './src/lib/*.js',
 	wrapper: './src/elpmisEditor.js',
