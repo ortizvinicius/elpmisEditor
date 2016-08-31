@@ -25,8 +25,8 @@ var elpmisElements = [],
       lists      : ['ul', 'ol', 'dl'],
       special    : ['abbr', 'code', 'hr'],
 
-      //{'class'|'inline'|false} this will determine how colors will be added to elements
-      colors     : 'class', 
+      //{'class'|'inline'|false} this will determine how css attributes will be added to elements
+      css        : 'class', 
 
       //{boolean} - If true adds the hyperlink element (a) option
       hyperlink  : true
@@ -338,7 +338,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
 
     //Set elpmisId propertie to each textarea element for control
     elements.forEach(function elementsIdIterator(element, index){
-      element.elpmisId = index;
+      element.elpmisId = index + 1;
     });
 
     if(options.autoInit){

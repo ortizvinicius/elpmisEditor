@@ -3,6 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <title>Teste</title>
+  <style>
+    * {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .elpmisPreviewElement, .textarea {
+      width: 500px;
+      height: auto;
+    }
+    .textarea { 
+      position: relative;
+      z-index: 20; 
+    }
+    .elpmisPreviewElement {
+      position: absolute;
+      -webkit-transition: all .2s;
+      -o-transition: all .2s;
+      transition: all .2s;
+      background: #EEE;
+      opacity: 0;
+      z-index: 10;
+      padding: 10px;
+      top: 20px;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0) inset;
+    }
+    .elpmisPreviewElement.active { 
+      opacity: 1;
+      -webkit-transform: translateX(510px);
+      -ms-transform: translateX(510px);
+      -o-transform: translateX(510px);
+      transform: translateX(510px);
+    }
+    .elpmisPreviewElement.pined { 
+      box-shadow: 0 0 10px rgba(0, 0, 0, .2) inset;
+    }
+    .elpmisPreviewElement-closeBtn {
+      right: 10px;
+      top: -10px;
+      position: absolute;
+    }
+    .elpmisPreviewElement-pinBtn {
+      right: 40px;
+      top: -10px;
+      position: absolute;
+    }
+  </style>
 </head>
 <body>
   <textarea name="textarea" class="textarea" id="textarea" cols="100" rows="20">Testando</textarea>
