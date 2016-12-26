@@ -1,6 +1,7 @@
 var ElpmisPreviewElement = {
 
   pinStatus: false,
+  pinBtnOver: false,
   contentElement: {},
 
   /**
@@ -20,7 +21,8 @@ var ElpmisPreviewElement = {
 
   //Show/hide the element
   toggle: function elpmisPreviewElementToggle(){
-    if(!this.init() && !this.pinStatus){
+    
+    if(!this.init() && !this.pinStatus && !this.pinBtnOver){
       this.domElement.classList.toggle('active');
       this.domElement.classList.toggle('inactive');
     }
@@ -90,6 +92,14 @@ var ElpmisPreviewElement = {
 
       this.pinBtn.addEventListener('click', function elpmisPreviewElementClosePinClick(){
         self.pinToggle();
+      });
+
+      this.pinBtn.addEventListener('mouseover', function elpmisPreviewElementClosePinOver(){
+        self.pinBtnOver = true;
+      });
+
+      this.pinBtn.addEventListener('mouseout', function elpmisPreviewElementClosePinOut(){
+        self.pinBtnOver = false;
       });
 
       this.contentElement = document.createElement('div');
