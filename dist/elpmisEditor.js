@@ -156,7 +156,6 @@ var ElpmisPreviewElement = {
 
   //Show/hide the element
   toggle: function elpmisPreviewElementToggle(){
-    
     if(!this.init() && !this.pinStatus && !this.pinBtnOver){
       this.domElement.classList.toggle('active');
       this.domElement.classList.toggle('inactive');
@@ -257,6 +256,10 @@ var ElpmisPreviewElement = {
       }); 
 
     }
+  },
+
+  destroy: function elpmisPreviewElementDestroy(){
+    if(!this.init()) this.domElement.remove();
   }
 
 };
@@ -307,7 +310,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   //Check if the options parameter was given
   if(typeof op === 'object' && op !== null){
 
-    //Iterates over the options default keys to check it it was given in the options parameter
+    //Iterates over the options default keys to check if it was given in the options parameter
     Object.keys(optionsDefault).forEach(function optionsIterator(option){
       if(op.hasOwnProperty(option)){
         options[option] = op[option];
@@ -315,7 +318,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
         options[option] = optionsDefault[option];
       }
     });
-  } else { options = optionsDefault; }
+  } else options = optionsDefault; 
 
   /**
    * Create a customComponent object then add this to the custom components array and to the Elpmis bar
@@ -327,7 +330,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
     //Only creates the element if it was not already initated
     if(!status){
     
-      config = typeof config == 'object' ? config : {};
+      config = typeof config === 'object' ? config : {};
       var customComponent = Object.create(ElpmisCustomComponent);
       customComponent.init(config, options.types);
       
@@ -346,43 +349,38 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   /**
    * Listen for keyboard events to add HTML elements to textarea value
    *
-   * @param {string} element
+   * @param {object} event
    */
-  function addKeyListeners(element){
+  function elementKeyPress(event){  
+    var key = event.which || event.keyCode,
+        shift = event.shiftKey;
 
-    element.addEventListener('keypress', function elementKeyPress(event){  
+    //Enter key = paragraph
+    if(options.blocks.indexOf('p') > -1){
       
-      var key = event.which || event.keyCode,
-          shift = event.shiftKey;
-
-      //Enter key = paragraph
-      if(options.blocks.indexOf('p') > -1){
-        
-        if(key === 13 && !shift){
-          event.preventDefault();
-          addHTMLElement(element, {
-            element: 'p',
-            newLineBefore: true,
-            newLineAfter: true,
-            inline: false
-          });
-        }
+      if(key === 13 && !shift){
+        event.preventDefault();
+        addHTMLElement(this, {
+          element: 'p',
+          newLineBefore: true,
+          newLineAfter: true,
+          inline: false
+        });
       }
+    }
 
-      //Shift+Enter key = line break
-      if(options.basic.indexOf('br') > -1){
-        
-        if(key === 13 && shift){
-          event.preventDefault();
-          addHTMLElement(element, {
-            element: 'br',
-            newLineAfter: true,
-            close: false
-          });
-        }
+    //Shift+Enter key = line break
+    if(options.basic.indexOf('br') > -1){
+      
+      if(key === 13 && shift){
+        event.preventDefault();
+        addHTMLElement(this, {
+          element: 'br',
+          newLineAfter: true,
+          close: false
+        });
       }
-
-    });
+    }
   }
 
   /**
@@ -499,6 +497,16 @@ var ElpmisEditor = function elpmisEditor(selector, op){
     previewElements[elpmisId].addToDOM();
     previewElements[elpmisId].watch();
   }
+
+  /**
+   * Remove a preview element of DOM
+   *
+   * @param {string} element
+   */
+  function removePreviewElement(element){
+    var elpmisId = element.elpmisId;
+    previewElements[elpmisId].destroy();
+  }
   
   /**
    * Inits the functions, so the textarea will be ready to use
@@ -508,13 +516,10 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   function init(element){
     if(!status){
       status = true;
-      if(options.keyListen){
-        addKeyListeners(element);
-      }
 
-      if(options.previewMode){
-        addPreviewElement(element);
-      }
+      if(options.keyListen) element.addEventListener('keypress', elementKeyPress);
+
+      if(options.previewMode) addPreviewElement(element);
     }
   }
 
@@ -529,14 +534,11 @@ var ElpmisEditor = function elpmisEditor(selector, op){
    * Destroy all the textarea elements (removes bar, preview elements, event listeners etc)
    */
   function destroy(){
-    elpmisElements[elSelector] = false;
-    var destroyProperties = Object.keys(this);
-
-    destroyProperties.forEach(function destroyIterator(destroyProperty){
-      delete this[destroyProperty];
-    }, this);
-
-    //REMOVE THE EVENT LISTENERS
+    elements.forEach(function destroyIterator(element){
+      if(options.keyListen) element.removeEventListener('keypress', elementKeyPress);
+      if(options.previewMode) removePreviewElement(element);
+    });
+    status = false;
   }
 
   //Test if the element is already used to avoid duplicates
@@ -563,14 +565,12 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       });
     }
 
-    //Set elpmisId propertie to each textarea element for control
+    //Set elpmisId property to each textarea element for control
     elements.forEach(function elementsIdIterator(element, index){
       element.elpmisId = index + 1;
     });
 
-    if(options.autoInit){
-      initAll();
-    }
+    if(options.autoInit) initAll();
 
     return {
       //{boolean}

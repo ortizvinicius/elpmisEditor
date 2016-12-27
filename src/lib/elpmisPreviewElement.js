@@ -21,7 +21,6 @@ var ElpmisPreviewElement = {
 
   //Show/hide the element
   toggle: function elpmisPreviewElementToggle(){
-    
     if(!this.init() && !this.pinStatus && !this.pinBtnOver){
       this.domElement.classList.toggle('active');
       this.domElement.classList.toggle('inactive');
@@ -122,6 +121,10 @@ var ElpmisPreviewElement = {
       }); 
 
     }
+  },
+
+  destroy: function elpmisPreviewElementDestroy(){
+    if(!this.init()) this.domElement.remove();
   }
 
 };
