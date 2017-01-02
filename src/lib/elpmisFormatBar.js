@@ -20,6 +20,8 @@ var ElpmisFormatBar = {
     this.domElement.id = 'elpmisFormatBar' + this.textareaElement.elpmisId;
 
     this.init = function(){ return false; };
+
+    return true;
   },
 
   //Add the format bar to DOM, after the textarea element

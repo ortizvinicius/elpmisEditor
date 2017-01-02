@@ -127,7 +127,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   function elementKeyPress(event){  
     var key = event.which || event.keyCode,
         shift = event.shiftKey;
-
+console.log(event);
     //Enter key = paragraph
     if(options.blocks.indexOf('p') > -1){
       
@@ -290,7 +290,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   function addFormatBar(element){ 
     var elpmisId = element.elpmisId;
     formatBars[elpmisId] = Object.create(ElpmisFormatBar);
-    formatBars[elpmisId].init(element, {
+    if(formatBars[elpmisId].init(element, {
       types         : options.types,
       basic         : options.basic, 
       header        : options.header, 
@@ -300,9 +300,11 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       css           : options.css,
       hyperlink     : options.hyperlink,
       addHTMLElement: addHTMLElement
-    });
-    formatBars[elpmisId].addBlocks();
-    formatBars[elpmisId].addToDOM();
+    })){
+      formatBars[elpmisId].addBlocks();
+      formatBars[elpmisId].addToDOM();
+    }
+    
   }
 
   /**
