@@ -127,7 +127,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   function elementKeyPress(event){  
     var key = event.which || event.keyCode,
         shift = event.shiftKey;
-console.log(event);
+
     //Enter key = paragraph
     if(options.blocks.indexOf('p') > -1){
       

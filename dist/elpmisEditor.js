@@ -180,14 +180,78 @@ var ElpmisFormatBar = {
       			if(tag === 'strong'){
 
       				this.config.basic[tag].innerHTML = '<strong>S</strong>';
-      				this.config.basic[tag].setAttribute('title', 'Strong');
+      				this.config.basic[tag].setAttribute('title', 'Bold');
 
       				clickConfig.newLineBefore = false;
       				clickConfig.newLineAfter = false;
       				clickConfig.close = true;
       				clickConfig.inline = true;
 
-      			}
+      			} else if(tag === 'em'){
+
+              this.config.basic[tag].innerHTML = '<em>I</em>';
+              this.config.basic[tag].setAttribute('title', 'Italic');
+
+              clickConfig.newLineBefore = false;
+              clickConfig.newLineAfter = false;
+              clickConfig.close = true;
+              clickConfig.inline = true;
+
+            } else if(tag === 'em'){
+
+              this.config.basic[tag].innerHTML = '<em>I</em>';
+              this.config.basic[tag].setAttribute('title', 'Italic');
+
+              clickConfig.newLineBefore = false;
+              clickConfig.newLineAfter = false;
+              clickConfig.close = true;
+              clickConfig.inline = true;
+
+            } else if(tag === 'mark'){
+
+              //FALTA ISSO
+
+            } else if(tag === 'sup'){
+
+              this.config.basic[tag].innerHTML = '<sup>sup</sup>';
+              this.config.basic[tag].setAttribute('title', 'Superscript');
+
+              clickConfig.newLineBefore = false;
+              clickConfig.newLineAfter = false;
+              clickConfig.close = true;
+              clickConfig.inline = true;
+
+            } else if(tag === 'sub'){
+
+              this.config.basic[tag].innerHTML = '<sub>sub</sub>';
+              this.config.basic[tag].setAttribute('title', 'Subscript');
+
+              clickConfig.newLineBefore = false;
+              clickConfig.newLineAfter = false;
+              clickConfig.close = true;
+              clickConfig.inline = true;
+
+            } else if(tag === 'del'){
+
+              this.config.basic[tag].innerHTML = '<del>del</del>';
+              this.config.basic[tag].setAttribute('title', 'Deleted text');
+
+              clickConfig.newLineBefore = false;
+              clickConfig.newLineAfter = false;
+              clickConfig.close = true;
+              clickConfig.inline = true;
+
+            } else {
+
+              this.config.basic[tag].innerHTML = '&crarr;';
+              this.config.basic[tag].setAttribute('title', 'Break line');
+
+              clickConfig.newLineBefore = false;
+              clickConfig.newLineAfter = true;
+              clickConfig.close = false;
+              clickConfig.inline = true;
+
+            }
 
       			this.config.basic[tag].addEventListener('click', function elpmisBasicButtonClick(){
       				self.config.addHTMLElement(self.textareaElement, clickConfig);
@@ -444,7 +508,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   function elementKeyPress(event){  
     var key = event.which || event.keyCode,
         shift = event.shiftKey;
-console.log(event);
+
     //Enter key = paragraph
     if(options.blocks.indexOf('p') > -1){
       
