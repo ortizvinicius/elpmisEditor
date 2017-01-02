@@ -722,7 +722,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
 
         newSelection = newValue.length;
         
-        newValue += config.close ? '</' + config.element + '>' : '';
+        newValue += config.close ? '</' + config.element + '>' : ''; //
         newValue += config.inline && config.newLineAfter ? '\n' : '';
 
         if(config.newLineAfter) newSelection = newValue.length;
