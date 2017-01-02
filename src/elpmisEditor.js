@@ -254,6 +254,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       element.focus();
       element.value = newValue;
       element.selectionStart = element.selectionEnd = newSelection;
+
+      if(options.previewMode) previewElements[element.elpmisId].updatePreview();
     }
 
   }
@@ -267,9 +269,9 @@ var ElpmisEditor = function elpmisEditor(selector, op){
     var elpmisId = element.elpmisId;
     previewElements[elpmisId] = Object.create(ElpmisPreviewElement);
     previewElements[elpmisId].init(element);
-    previewElements[elpmisId].updatePreview();
     previewElements[elpmisId].addToDOM();
     previewElements[elpmisId].watch();
+    previewElements[elpmisId].updatePreview();
   }
 
   /**

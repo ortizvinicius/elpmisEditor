@@ -140,7 +140,128 @@ var ElpmisFormatBar = {
       	}
 
       	this.domElement.appendChild(this.blocks.basic.domElement);
+      }
 
+      //Blocks
+      if(this.config.types.indexOf('blocks') > -1){
+
+        this.blocks.blocks = {};
+        this.blocks.blocks.domElement = document.createElement('div');
+        this.blocks.blocks.domElement.classList.add('elpmisFormatBar-blocksBlock');
+        this.blocks.blocks.domElement.id = 'elpmisFormatBar-blocksBlock' + this.textareaElement.elpmisId;
+
+        if(this.config.hasOwnProperty('blocks') && typeof this.config.blocks === 'object'){
+          this.config.blocks.forEach(function blocksBlockIterator(tag){
+
+            var clickConfig = {};
+
+            this.config.blocks[tag] = document.createElement('button');
+            this.config.blocks[tag].classList.add('elpmisFormatBar-blocksBlock-' + tag + 'Button');
+            this.config.blocks[tag].id = 'elpmisFormatBar-blocksBlock-' + tag + 'Button' + this.textareaElement.elpmisId;
+
+            clickConfig.element = tag;
+
+            if(tag === 'p'){
+
+              this.config.blocks[tag].innerHTML = 'Paragraph';
+
+              clickConfig.newLineBefore = true;
+              clickConfig.newLineAfter = true;
+              clickConfig.close = true;
+              clickConfig.inline = false;
+
+            } else if(tag === 'blockquote'){
+
+              this.config.blocks[tag].innerHTML = '&ldquo;Quotes&rdquo;';
+
+              clickConfig.newLineBefore = true;
+              clickConfig.newLineAfter = true;
+              clickConfig.close = true;
+              clickConfig.inline = false;
+
+            } else if(tag === 'pre'){
+
+              this.config.blocks[tag].innerHTML = '<pre>Pre</pre>';
+              this.config.blocks[tag].setAttribute('title', 'Preformatted text');
+
+              clickConfig.newLineBefore = true;
+              clickConfig.newLineAfter = true;
+              clickConfig.close = true;
+              clickConfig.inline = false;
+
+            }
+
+            this.config.blocks[tag].addEventListener('click', function elpmisBlocksButtonClick(){
+              self.config.addHTMLElement(self.textareaElement, clickConfig);
+            });
+
+            this.blocks.blocks.domElement.appendChild(this.config.blocks[tag]);
+
+          }, this);
+        }
+
+        this.domElement.appendChild(this.blocks.blocks.domElement);
+      }
+
+      if(this.config.hasOwnProperty('special') && typeof this.config.special === 'object'){
+
+        this.blocks.special = {};
+        this.blocks.special.domElement = document.createElement('div');
+        this.blocks.special.domElement.classList.add('elpmisFormatBar-specialBlock');
+        this.blocks.special.domElement.id = 'elpmisFormatBar-specialBlock' + this.textareaElement.elpmisId;
+
+        if(this.config.hasOwnProperty('special') && typeof this.config.special === 'object'){
+
+          this.config.special.forEach(function specialBlockIterator(tag){
+
+            var clickConfig = {};
+
+            this.config.special[tag] = document.createElement('button');
+            this.config.special[tag].classList.add('elpmisFormatBar-specialBlock-' + tag + 'Button');
+            this.config.special[tag].id = 'elpmisFormatBar-specialBlock-' + tag + 'Button' + this.textareaElement.elpmisId;
+
+            clickConfig.element = tag;
+
+            if(tag === 'abbr'){
+
+              this.config.special[tag].innerHTML = 'Abbr';
+              this.config.special[tag].setAttribute('title', 'Abbreviation');
+
+              clickConfig.newLineBefore = false;
+              clickConfig.newLineAfter = false;
+              clickConfig.close = true;
+              clickConfig.inline = true;
+
+            } else if(tag === 'code'){
+
+              this.config.special[tag].innerHTML = '<code>Code</code>';
+
+              clickConfig.newLineBefore = false;
+              clickConfig.newLineAfter = false;
+              clickConfig.close = true;
+              clickConfig.inline = true;
+
+            } else if(tag === 'hr'){
+
+              this.config.special[tag].innerHTML = 'Line';
+
+              clickConfig.newLineBefore = true;
+              clickConfig.newLineAfter = true;
+              clickConfig.close = false;
+              clickConfig.inline = true;
+
+            } 
+
+            this.config.special[tag].addEventListener('click', function elpmisSpecialButtonClick(){
+              self.config.addHTMLElement(self.textareaElement, clickConfig);
+            });
+
+            this.blocks.special.domElement.appendChild(this.config.special[tag]);
+
+          }, this);
+        }
+
+        this.domElement.appendChild(this.blocks.special.domElement);
       }
 
     }
