@@ -52,15 +52,12 @@
   </style>
 </head>
 <body>
-  <textarea name="textarea" class="textarea" id="textarea" cols="100" rows="20">Testando</textarea>
+  <textarea name="textarea" class="textarea" id="textarea" cols="100" rows="20">testando</textarea>
 
   <script src="elpmisEditor.js"></script>
   <script>
-  try { 
-  	var editor = ElpmisEditor(".textarea", { autoInit:true });  
-  } catch (e){
-  	console.error(e.toString());
-  }
+  var editor = ElpmisEditor(".textarea", { autoInit:true });  
+  
   </script>
 </body>
 </html>

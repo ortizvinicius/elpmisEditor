@@ -75,7 +75,10 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       customComponents = [],
 
       //List the preview elements linked to each textarea elements
-      previewElements = [];
+      previewElements = [],
+
+      //List the format bars elements linked to each textarea elements
+      formatBars = [];
 
   //Check if the options parameter was given
   if(typeof op === 'object' && op !== null){
@@ -217,7 +220,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
         newValue += '<' + config.element + '>';
         newValue += elValue.substring(selectionStart, selectionEnd);
 
-        if(config.newLineBefore) newSelection = newValue.length;
+        newSelection = newValue.length;
         
         newValue += config.close ? '</' + config.element + '>' : '';
         newValue += config.inline && config.newLineAfter ? '\n' : '';
@@ -248,6 +251,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
 
       }
 
+      element.focus();
       element.value = newValue;
       element.selectionStart = element.selectionEnd = newSelection;
     }
@@ -277,6 +281,39 @@ var ElpmisEditor = function elpmisEditor(selector, op){
     var elpmisId = element.elpmisId;
     previewElements[elpmisId].destroy();
   }
+
+  /**
+   * Add a format bar to DOM, linked to textarea element
+   *
+   * @param {string} element
+   */
+  function addFormatBar(element){ 
+    var elpmisId = element.elpmisId;
+    formatBars[elpmisId] = Object.create(ElpmisFormatBar);
+    formatBars[elpmisId].init(element, {
+      types         : options.types,
+      basic         : options.basic, 
+      header        : options.header, 
+      blocks        : options.blocks,
+      lists         : options.lists,
+      special       : options.special,
+      css           : options.css,
+      hyperlink     : options.hyperlink,
+      addHTMLElement: addHTMLElement
+    });
+    formatBars[elpmisId].addBlocks();
+    formatBars[elpmisId].addToDOM();
+  }
+
+  /**
+   * Remove a format element of DOM
+   *
+   * @param {string} element
+   */
+  function removeFormatBar(element){
+    var elpmisId = element.elpmisId;
+    formatBars[elpmisId].destroy();
+  }
   
   /**
    * Inits the functions, so the textarea will be ready to use
@@ -290,6 +327,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       if(options.keyListen) element.addEventListener('keypress', elementKeyPress);
 
       if(options.previewMode) addPreviewElement(element);
+
+      addFormatBar(element);
     }
   }
 
@@ -301,7 +340,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   }
 
   /**
-   * Destroy all the textarea elements (removes bar, preview elements, event listeners etc)
+   * Destroy (or pause) all the textarea elements (removes bar, preview elements, event listeners etc)
+   * With initi/initAll the element returns with all functions
    */
   function destroy(){
     elements.forEach(function destroyIterator(element){

@@ -121,6 +121,89 @@ Object.defineProperties(ElpmisException, {
   }
 });
 
+var ElpmisFormatBar = {
+
+	blocks : {},
+
+	/**
+   * @param {HTMLElement} textareaElement
+   * @param {object} config (types, basic, header, blocks, list, special, css, hyperlink, addHTMLElement function)
+   */
+  init: function elpmisFormatBarInit(textareaElement, config){
+
+  	if(typeof config !== 'object') return false;
+
+  	this.config = config;
+
+    this.textareaElement = textareaElement;
+    this.domElement = document.createElement('div');
+
+    this.domElement.classList.add('elpmisFormatBar');
+    this.domElement.classList.toggle('inactive');
+    this.domElement.id = 'elpmisFormatBar' + this.textareaElement.elpmisId;
+
+    this.init = function(){ return false; };
+  },
+
+  //Add the format bar to DOM, after the textarea element
+  addToDOM: function elpmisFormatBarAddToDOM(){
+    if(!this.init()) document.body.insertBefore(this.domElement, this.textareaElement);
+  },
+
+  //Add the blocks to bar
+  addBlocks: function elpmisFormatBarAddToDOM(){
+    if(!this.init()){ 
+
+    	var self = this;
+      
+      //Basic
+      if(this.config.types.indexOf('basic') > -1){
+
+      	this.blocks.basic = {};
+      	this.blocks.basic.domElement = document.createElement('div');
+      	this.blocks.basic.domElement.classList.add('elpmisFormatBar-basicBlock');
+      	this.blocks.basic.domElement.id = 'elpmisFormatBar-basicBlock' + this.textareaElement.elpmisId;
+
+      	if(this.config.hasOwnProperty('basic') && typeof this.config.basic === 'object'){
+      		this.config.basic.forEach(function basicBlockIterator(tag){
+
+      			var clickConfig = {};
+
+      			this.config.basic[tag] = document.createElement('button');
+      			this.config.basic[tag].classList.add('elpmisFormatBar-basicBlock-' + tag + 'Button');
+      			this.config.basic[tag].id = 'elpmisFormatBar-basicBlock-' + tag + 'Button' + this.textareaElement.elpmisId;
+
+      			clickConfig.element = tag;
+
+      			if(tag === 'strong'){
+
+      				this.config.basic[tag].innerHTML = '<strong>S</strong>';
+      				this.config.basic[tag].setAttribute('title', 'Strong');
+
+      				clickConfig.newLineBefore = false;
+      				clickConfig.newLineAfter = false;
+      				clickConfig.close = true;
+      				clickConfig.inline = true;
+
+      			}
+
+      			this.config.basic[tag].addEventListener('click', function elpmisBasicButtonClick(){
+      				self.config.addHTMLElement(self.textareaElement, clickConfig);
+      			});
+
+      			this.blocks.basic.domElement.appendChild(this.config.basic[tag]);
+
+      		}, this);
+      	}
+
+      	this.domElement.appendChild(this.blocks.basic.domElement);
+
+      }
+
+    }
+  }
+
+};
 function addMultipleEventListeners(element, events, eventFunction){
   events.forEach(function(event){
     element.addEventListener(event, eventFunction);
@@ -245,6 +328,8 @@ var ElpmisPreviewElement = {
   //Watchs for changes in textarea element value
   watch: function elpmisPreviewElementWatch(){
     if(!this.init()){
+
+      this.updatePreview();
       
       var self = this;
       addMultipleEventListeners(self.textareaElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
@@ -305,7 +390,10 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       customComponents = [],
 
       //List the preview elements linked to each textarea elements
-      previewElements = [];
+      previewElements = [],
+
+      //List the format bars elements linked to each textarea elements
+      formatBars = [];
 
   //Check if the options parameter was given
   if(typeof op === 'object' && op !== null){
@@ -447,7 +535,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
         newValue += '<' + config.element + '>';
         newValue += elValue.substring(selectionStart, selectionEnd);
 
-        if(config.newLineBefore) newSelection = newValue.length;
+        newSelection = newValue.length;
         
         newValue += config.close ? '</' + config.element + '>' : '';
         newValue += config.inline && config.newLineAfter ? '\n' : '';
@@ -478,6 +566,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
 
       }
 
+      element.focus();
       element.value = newValue;
       element.selectionStart = element.selectionEnd = newSelection;
     }
@@ -507,6 +596,39 @@ var ElpmisEditor = function elpmisEditor(selector, op){
     var elpmisId = element.elpmisId;
     previewElements[elpmisId].destroy();
   }
+
+  /**
+   * Add a format bar to DOM, linked to textarea element
+   *
+   * @param {string} element
+   */
+  function addFormatBar(element){ 
+    var elpmisId = element.elpmisId;
+    formatBars[elpmisId] = Object.create(ElpmisFormatBar);
+    formatBars[elpmisId].init(element, {
+      types         : options.types,
+      basic         : options.basic, 
+      header        : options.header, 
+      blocks        : options.blocks,
+      lists         : options.lists,
+      special       : options.special,
+      css           : options.css,
+      hyperlink     : options.hyperlink,
+      addHTMLElement: addHTMLElement
+    });
+    formatBars[elpmisId].addBlocks();
+    formatBars[elpmisId].addToDOM();
+  }
+
+  /**
+   * Remove a format element of DOM
+   *
+   * @param {string} element
+   */
+  function removeFormatBar(element){
+    var elpmisId = element.elpmisId;
+    formatBars[elpmisId].destroy();
+  }
   
   /**
    * Inits the functions, so the textarea will be ready to use
@@ -520,6 +642,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       if(options.keyListen) element.addEventListener('keypress', elementKeyPress);
 
       if(options.previewMode) addPreviewElement(element);
+
+      addFormatBar(element);
     }
   }
 
@@ -531,7 +655,8 @@ var ElpmisEditor = function elpmisEditor(selector, op){
   }
 
   /**
-   * Destroy all the textarea elements (removes bar, preview elements, event listeners etc)
+   * Destroy (or pause) all the textarea elements (removes bar, preview elements, event listeners etc)
+   * With initi/initAll the element returns with all functions
    */
   function destroy(){
     elements.forEach(function destroyIterator(element){

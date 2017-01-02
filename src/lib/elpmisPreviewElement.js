@@ -110,6 +110,8 @@ var ElpmisPreviewElement = {
   //Watchs for changes in textarea element value
   watch: function elpmisPreviewElementWatch(){
     if(!this.init()){
+
+      this.updatePreview();
       
       var self = this;
       addMultipleEventListeners(self.textareaElement, ['input', 'change', 'keyup', 'keydown', 'keypress'], function(){
