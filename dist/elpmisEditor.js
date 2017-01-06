@@ -139,7 +139,6 @@ var ElpmisFormatBar = {
     this.domElement = document.createElement('div');
 
     this.domElement.classList.add('elpmisFormatBar');
-    this.domElement.classList.toggle('inactive');
     this.domElement.id = 'elpmisFormatBar' + this.textareaElement.elpmisId;
 
     this.init = function(){ return false; };
@@ -179,7 +178,7 @@ var ElpmisFormatBar = {
 
       			if(tag === 'strong'){
 
-      				this.config.basic[tag].innerHTML = '<strong>S</strong>';
+      				this.config.basic[tag].innerHTML = '<strong>B</strong>';
       				this.config.basic[tag].setAttribute('title', 'Bold');
 
       				clickConfig.newLineBefore = false;
@@ -263,6 +262,48 @@ var ElpmisFormatBar = {
       	}
 
       	this.domElement.appendChild(this.blocks.basic.domElement);
+      }
+
+      //Header
+      if(this.config.types.indexOf('header') > -1){
+
+        this.blocks.header = {};
+        this.blocks.header.domElement = document.createElement('div');
+        this.blocks.header.domElement.classList.add('elpmisFormatBar-headerBlock');
+        this.blocks.header.domElement.id = 'elpmisFormatBar-headerBlock' + this.textareaElement.elpmisId;
+
+        if(this.config.hasOwnProperty('header') && typeof this.config.header === 'object'){
+          
+          this.blocks.header.selectElement = document.createElement('select');
+          this.blocks.header.selectElement.id = 'elpmisFormatBar-headerBlock-select' + this.textareaElement.elpmisId;
+
+          this.config.header.forEach(function headerBlockIterator(tag){ 
+
+            this.config.header[tag] = document.createElement('option');
+            this.config.header[tag].setAttribute('value', tag);
+            this.config.header[tag].innerHTML = 'Header ' + tag.substring(1);
+            this.config.header[tag].changeConfig = {
+              element: tag,
+              newLineBefore: true,
+              newLineAfter: true,
+              close: true,
+              inline: false
+            };
+
+            this.blocks.header.selectElement.appendChild(this.config.header[tag]);
+
+          }, this);
+
+          this.blocks.header.selectElement.addEventListener('change', function elpmisHeaderSelectChange(){
+            var tag = self.blocks.header.selectElement.value;
+            self.config.addHTMLElement(self.textareaElement, self.config.header[tag].changeConfig);
+          });
+
+          this.blocks.header.domElement.appendChild(this.blocks.header.selectElement);
+
+        }
+
+        this.domElement.appendChild(this.blocks.header.domElement);
       }
 
       //Blocks
@@ -722,7 +763,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
 
         newSelection = newValue.length;
         
-        newValue += config.close ? '</' + config.element + '>' : ''; //
+        newValue += config.close ? '</' + config.element + '>' : ''; 
         newValue += config.inline && config.newLineAfter ? '\n' : '';
 
         if(config.newLineAfter) newSelection = newValue.length;
