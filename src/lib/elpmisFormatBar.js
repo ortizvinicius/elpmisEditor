@@ -83,10 +83,6 @@ var ElpmisFormatBar = {
               clickConfig.close = true;
               clickConfig.inline = true;
 
-            } else if(tag === 'mark'){
-
-              //FALTA ISSO
-
             } else if(tag === 'sup'){
 
               this.config.basic[tag].innerHTML = '<sup>sup</sup>';
@@ -244,6 +240,7 @@ var ElpmisFormatBar = {
         this.domElement.appendChild(this.blocks.blocks.domElement);
       }
 
+      //Special
       if(this.config.hasOwnProperty('special') && typeof this.config.special === 'object'){
 
         this.blocks.special = {};

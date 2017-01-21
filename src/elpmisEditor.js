@@ -19,7 +19,7 @@ var elpmisElements = [],
 
       //{array of strings with valid HTML elements|false}
       types      : ['basic', 'header', 'blocks', 'lists', 'special', 'colors', 'hyperlink'],
-      basic      : ['strong', 'em', 'mark', 'sup', 'sub', 'del', 'br'], 
+      basic      : ['strong', 'em', 'sup', 'sub', 'del', 'br'], 
       header     : ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
       blocks     : ['p', 'blockquote', 'pre'], 
       lists      : ['ul', 'ol', 'dl'],

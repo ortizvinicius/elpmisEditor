@@ -19,7 +19,7 @@ var elpmisElements = [],
 
       //{array of strings with valid HTML elements|false}
       types      : ['basic', 'header', 'blocks', 'lists', 'special', 'colors', 'hyperlink'],
-      basic      : ['strong', 'em', 'mark', 'sup', 'sub', 'del', 'br'], 
+      basic      : ['strong', 'em', 'sup', 'sub', 'del', 'br'], 
       header     : ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
       blocks     : ['p', 'blockquote', 'pre'], 
       lists      : ['ul', 'ol', 'dl'],
@@ -206,10 +206,6 @@ var ElpmisFormatBar = {
               clickConfig.close = true;
               clickConfig.inline = true;
 
-            } else if(tag === 'mark'){
-
-              //FALTA ISSO
-
             } else if(tag === 'sup'){
 
               this.config.basic[tag].innerHTML = '<sup>sup</sup>';
@@ -367,6 +363,7 @@ var ElpmisFormatBar = {
         this.domElement.appendChild(this.blocks.blocks.domElement);
       }
 
+      //Special
       if(this.config.hasOwnProperty('special') && typeof this.config.special === 'object'){
 
         this.blocks.special = {};
