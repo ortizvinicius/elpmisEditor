@@ -18,11 +18,10 @@ var elpmisElements = [],
       keyListen  : true,
 
       //{array of strings with valid HTML elements|false}
-      types      : ['basic', 'header', 'blocks', 'lists', 'special', 'colors', 'hyperlink'],
+      types      : ['basic', 'header', 'blocks', 'special', 'colors', 'hyperlink'],
       basic      : ['strong', 'em', 'sup', 'sub', 'del', 'br'], 
       header     : ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
       blocks     : ['p', 'blockquote', 'pre'], 
-      lists      : ['ul', 'ol', 'dl'],
       special    : ['abbr', 'code', 'hr'],
 
       //{'class'|'inline'|false} this will determine how css attributes will be added to elements
@@ -364,7 +363,7 @@ var ElpmisFormatBar = {
       }
 
       //Special
-      if(this.config.hasOwnProperty('special') && typeof this.config.special === 'object'){
+      if(this.config.types.indexOf('special') > -1){
 
         this.blocks.special = {};
         this.blocks.special.domElement = document.createElement('div');
@@ -423,6 +422,48 @@ var ElpmisFormatBar = {
         }
 
         this.domElement.appendChild(this.blocks.special.domElement);
+      }
+
+      //Link
+      if(this.config.types.indexOf('hyperlink') > -1){
+
+        this.blocks.hyperlink = {};
+        this.blocks.hyperlink.domElement = document.createElement('div');
+        this.blocks.hyperlink.domElement.classList.add('elpmisFormatBar-hyperlinkBlock');
+        this.blocks.hyperlink.domElement.id = 'elpmisFormatBar-hyperlinkBlock' + this.textareaElement.elpmisId;
+
+        if(this.config.hasOwnProperty('hyperlink') && !!this.config.hyperlink){
+
+          this.blocks.hyperlink.input = document.createElement('input');
+          this.blocks.hyperlink.input.setAttribute('placeholder', 'Hyperlink');
+          this.blocks.hyperlink.input.setAttribute('type', 'url');
+          this.blocks.hyperlink.input.classList.add('elpmisFormatBar-hyperlinkBlock-input');
+          this.blocks.hyperlink.input.id = 'elpmisFormatBar-hyperlinkBlock-input' + this.textareaElement.elpmisId;
+          this.blocks.hyperlink.domElement.appendChild(this.blocks.hyperlink.input);
+
+          this.blocks.hyperlink.button = document.createElement('button');
+          this.blocks.hyperlink.button.innerHTML = 'Ok';
+          this.blocks.hyperlink.button.classList.add('elpmisFormatBar-hyperlinkBlock-button');
+          this.blocks.hyperlink.button.id = 'elpmisFormatBar-hyperlinkBlock-button' + this.textareaElement.elpmisId;
+          this.blocks.hyperlink.domElement.appendChild(this.blocks.hyperlink.button);
+
+          var clickConfig = {
+            element: 'a',
+            newLineBefore: false,
+            newLineAfter: false,
+            close: true,
+            inline: true,
+            href: this.blocks.hyperlink.input.id
+          };
+
+          this.blocks.hyperlink.button.addEventListener('click', function elpmisHyperlinkButtonClick(){
+            self.config.addHTMLElement(self.textareaElement, clickConfig);
+          });
+
+
+        }
+
+        this.domElement.appendChild(this.blocks.hyperlink.domElement);
       }
 
     }
@@ -720,6 +761,9 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       //boolean - false for block elements
       config.inline = config.hasOwnProperty('inline') ? config.inline : true;
 
+      //string|boolean - ID of element contains href
+      config.href = config.href || '#';
+
       //Search for the caret position
       var selectionStart = element.selectionStart,
           selectionEnd = element.selectionEnd,
@@ -755,7 +799,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       if(config.inline || (selectionRangeText !== '' && !hasTag)){
         newValue  = elValue.substring(0, selectionStart);
         newValue += config.inline && config.newLineBefore ? '\n' : '';
-        newValue += '<' + config.element + '>';
+        newValue += config.element === 'a' ?  '<' + config.element + ' href="' + document.getElementById(config.href).value + '">' : '<' + config.element + '>';
         newValue += elValue.substring(selectionStart, selectionEnd);
 
         newSelection = newValue.length;
@@ -835,7 +879,6 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       basic         : options.basic, 
       header        : options.header, 
       blocks        : options.blocks,
-      lists         : options.lists,
       special       : options.special,
       css           : options.css,
       hyperlink     : options.hyperlink,

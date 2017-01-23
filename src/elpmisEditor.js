@@ -18,11 +18,10 @@ var elpmisElements = [],
       keyListen  : true,
 
       //{array of strings with valid HTML elements|false}
-      types      : ['basic', 'header', 'blocks', 'lists', 'special', 'colors', 'hyperlink'],
+      types      : ['basic', 'header', 'blocks', 'special', 'colors', 'hyperlink'],
       basic      : ['strong', 'em', 'sup', 'sub', 'del', 'br'], 
       header     : ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
       blocks     : ['p', 'blockquote', 'pre'], 
-      lists      : ['ul', 'ol', 'dl'],
       special    : ['abbr', 'code', 'hr'],
 
       //{'class'|'inline'|false} this will determine how css attributes will be added to elements
@@ -182,6 +181,9 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       //boolean - false for block elements
       config.inline = config.hasOwnProperty('inline') ? config.inline : true;
 
+      //string|boolean - ID of element contains href
+      config.href = config.href || '#';
+
       //Search for the caret position
       var selectionStart = element.selectionStart,
           selectionEnd = element.selectionEnd,
@@ -217,7 +219,7 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       if(config.inline || (selectionRangeText !== '' && !hasTag)){
         newValue  = elValue.substring(0, selectionStart);
         newValue += config.inline && config.newLineBefore ? '\n' : '';
-        newValue += '<' + config.element + '>';
+        newValue += config.element === 'a' ?  '<' + config.element + ' href="' + document.getElementById(config.href).value + '">' : '<' + config.element + '>';
         newValue += elValue.substring(selectionStart, selectionEnd);
 
         newSelection = newValue.length;
@@ -297,7 +299,6 @@ var ElpmisEditor = function elpmisEditor(selector, op){
       basic         : options.basic, 
       header        : options.header, 
       blocks        : options.blocks,
-      lists         : options.lists,
       special       : options.special,
       css           : options.css,
       hyperlink     : options.hyperlink,

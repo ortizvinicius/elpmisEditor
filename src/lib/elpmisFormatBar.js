@@ -241,7 +241,7 @@ var ElpmisFormatBar = {
       }
 
       //Special
-      if(this.config.hasOwnProperty('special') && typeof this.config.special === 'object'){
+      if(this.config.types.indexOf('special') > -1){
 
         this.blocks.special = {};
         this.blocks.special.domElement = document.createElement('div');
@@ -300,6 +300,48 @@ var ElpmisFormatBar = {
         }
 
         this.domElement.appendChild(this.blocks.special.domElement);
+      }
+
+      //Link
+      if(this.config.types.indexOf('hyperlink') > -1){
+
+        this.blocks.hyperlink = {};
+        this.blocks.hyperlink.domElement = document.createElement('div');
+        this.blocks.hyperlink.domElement.classList.add('elpmisFormatBar-hyperlinkBlock');
+        this.blocks.hyperlink.domElement.id = 'elpmisFormatBar-hyperlinkBlock' + this.textareaElement.elpmisId;
+
+        if(this.config.hasOwnProperty('hyperlink') && !!this.config.hyperlink){
+
+          this.blocks.hyperlink.input = document.createElement('input');
+          this.blocks.hyperlink.input.setAttribute('placeholder', 'Hyperlink');
+          this.blocks.hyperlink.input.setAttribute('type', 'url');
+          this.blocks.hyperlink.input.classList.add('elpmisFormatBar-hyperlinkBlock-input');
+          this.blocks.hyperlink.input.id = 'elpmisFormatBar-hyperlinkBlock-input' + this.textareaElement.elpmisId;
+          this.blocks.hyperlink.domElement.appendChild(this.blocks.hyperlink.input);
+
+          this.blocks.hyperlink.button = document.createElement('button');
+          this.blocks.hyperlink.button.innerHTML = 'Ok';
+          this.blocks.hyperlink.button.classList.add('elpmisFormatBar-hyperlinkBlock-button');
+          this.blocks.hyperlink.button.id = 'elpmisFormatBar-hyperlinkBlock-button' + this.textareaElement.elpmisId;
+          this.blocks.hyperlink.domElement.appendChild(this.blocks.hyperlink.button);
+
+          var clickConfig = {
+            element: 'a',
+            newLineBefore: false,
+            newLineAfter: false,
+            close: true,
+            inline: true,
+            href: this.blocks.hyperlink.input.id
+          };
+
+          this.blocks.hyperlink.button.addEventListener('click', function elpmisHyperlinkButtonClick(){
+            self.config.addHTMLElement(self.textareaElement, clickConfig);
+          });
+
+
+        }
+
+        this.domElement.appendChild(this.blocks.hyperlink.domElement);
       }
 
     }
